@@ -3,7 +3,7 @@ option = -o exe
 source = 
 object = sha256.o sha256_test.o
 run:$(object)
-	$(CC) $(object) $(option)
+	$(CC)  $(object) $(option)
 	./exe
 2:
 	gcc -O2 main.c -o exe

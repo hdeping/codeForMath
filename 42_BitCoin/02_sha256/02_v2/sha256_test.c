@@ -61,7 +61,7 @@ void print_buf(BYTE *buf)
     
 }
 /*}}}*/
-/*int sha256_testf{{{*/
+/*int sha256_test{{{*/
 int sha256_test()
 {
 	// BYTE text1[] = {"abc"};
@@ -87,7 +87,8 @@ int sha256_test()
 	    sha256_init(&ctx);
 	    sha256_update(&ctx, text1, strlen(text1));
 	    sha256_final(&ctx, buf);
-        if ( buf[0] + buf[1] + buf[2] == 0  )
+        // if ( buf[0] + buf[1] + buf[2] == 0  )
+        if ( buf[0] + buf[1] == 0  )
         // if ( buf[0] == 0  )
         {
             printf("nounce = %d ",i);
