@@ -17,8 +17,8 @@ int main( int argc,char *argv[]){
         gettimeofday(&start,NULL );
         selectSort(p);
         gettimeofday(&end,NULL );
+        time[i] = get_time(start,end);
         recordOrder +=  sortTest(p);
-        // print_num(p);
     }
     analyze_time(time);
     print_time(time);

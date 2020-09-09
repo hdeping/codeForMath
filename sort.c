@@ -20,27 +20,23 @@ void selectSort(int *num)
                 max1 = j;
             }
         }
-        if ( i == max1  )
+        bool p1,p2;
+        p1 = ( i == max1  ) ;
+        p2 = ( last == min );
+        if ( p1 && p2 )
         {
             swap(num+max1,num+last);
-            swap(num+min,num+i);
         }
-        else if ( last == min )
+        else if ( p1 && (!p2) )
         {
-            swap(num+min,num+i);
             swap(num+max1,num+last);
+            swap(num+min,num+i);
         }
         else
         {
             swap(num+min,num+i);
             swap(num+max1,num+last);
         }
-        // print_num(num);
-    }
-    int tmp = nn / 2 - 1;
-    if ( num[tmp] > num[tmp+1] )
-    {
-        swap(num+tmp,num+tmp+1);
         // print_num(num);
     }
 }

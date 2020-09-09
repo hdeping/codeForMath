@@ -10,7 +10,7 @@
 
 #define total (1.0*RAND_MAX)
 #define m 100
-#define nn 10
+#define nn 30000
 
 typedef struct timeval new_time;
 void getdat(int n);
