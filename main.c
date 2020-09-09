@@ -1,19 +1,18 @@
 #include "head.h"
-#define n 20
+#define n 100
 
 /*double getx{{{*/
 double getx(double *num,double alpha)
 {
-    double an;
-    double delta = 0.98/n;
-    for(int j = 0;j < n;j++)
+    double an = 0.5;
+    for(int i = 0;i < 30;i++)
     {
-        an = 0.01+j*delta;
-        for(int i = 0;i < 30;i++)
-        {
-            an = alpha*an*(1-an);
-        }
-        num[j] = an;
+        an = alpha*an*(1-an);
+    }
+    for(int i = 0;i < n;i++)
+    {
+        an = alpha*an*(1-an);
+        num[i] = an;
     }
     return an;
 }
@@ -21,22 +20,27 @@ double getx(double *num,double alpha)
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    double alpha;
+    double alpha = 0;
     double an;
-    double num[10];
+    double num[n];
     FILE *fp;
     fp= fopen("data.txt","w");
     assert(fp != NULL);
 
-    for(int i = 0;i < 40;i++)
+    for(int i = 0;i < 200;i++)
     {
-        alpha = 3.0+0.025*(i + 1);
+        if ( i < 100 )
+        {
+            alpha = 0.03*(i + 1);
+        }
+        else
+        {
+            alpha = 3+0.01*(i - 99);
+        }
         getx(num,alpha);
         for(int j = 0;j < n;j++)
         {
-            // fprintf(fp,"%lf %lf\n",alpha,num[j]);
-            printf("alpha = %lf,num = %lf\n",
-                    alpha,num[j]);
+            fprintf(fp,"%lf %10.3lf\n",alpha,num[j]);
         }
     }
     fclose(fp);
