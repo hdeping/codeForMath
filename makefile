@@ -1,21 +1,8 @@
-CC = gcc -g
-option = -o exe -lm -lfftw3
-object = main.o
-source = main.c
-run:$(object)
-	$(CC) $(object) $(option)
+com= gcc -O2 -g -o exe  -lm -L/usr/include
+#all:run p
+run:
+	$(com) main.c
 	./exe
-2:
-	gcc -O2 main.c -o exe
-	./exe
-g:
-	$(CC) $(source)
-	gdb exe
 p:
 	gnuplot pic.sh
-	gspng
-	crop_png pic.png
-	rm pic.png
-	eog newpic.png
-clean:
-	rm exe $(object)
+	evince pic.eps
