@@ -32,6 +32,8 @@ void init_data(double *x,double *y,double *z,
 void iterProc(double *x,double *y,double *z,
                double *diff_y,double *diff_z,int n)
 {
+    double *tmp;
+    tmp = (double *)malloc(sizeof(double)*n);
     double sum_y = 0.0;
     double sum_z = 0.0;
     for(int i = 0;i < n;i++)
@@ -47,11 +49,19 @@ void iterProc(double *x,double *y,double *z,
     }
     // refresh y,z
     y[0] = 0.0;
+    tmp[n-1] = 1.0;
     for(int i = 1;i < n;i++)
     {
         y[i] = y[i - 1] + delta*diff_y[i];
+        tmp[n - 1 - i] = tmp[n - i] - diff_y[n-1-i];
         z[i] = x[i]*x[i] + y[i]*y[i];
     }
+    for(int i = 1;i < n - 1;i++)
+    {
+        y[i] = (y[i] + tmp[i]) / 2.0;
+    }
+    
+    free(tmp);
 
 }
 /*}}}*/
@@ -70,7 +80,7 @@ int main( int argc,char *argv[])
 
     init_data(x,y,z,diff_y,diff_z,n);
 
-    int iteration = 10000;
+    int iteration = 100;
     for(int i = 0;i < iteration;i++)
     {
         iterProc(x,y,z,diff_y,diff_z,n);
