@@ -18,3 +18,5 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
+d:
+	sh dot.sh

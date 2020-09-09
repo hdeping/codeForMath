@@ -1,92 +1,120 @@
+/**
+ * It is a new  version
+ * which I no longer copy the code 
+ * from the manual or the examples
+ * */
 #include "head.h"
-/*void before{{{*/
-void before()
-{
-    int size ;
-    igraph_t g;
-    size = sizeof(igraph_t);
-    printf("size of igraph_t = %d\n",size);
-    size = sizeof(igraph_vector_t);
-    printf("size of igraph_vector_t= %d\n",size);
-    size = sizeof(igraph_adjacency_t);
-    printf("size of igraph_adjacency_t = %d\n",size);
-}
-/*}}}*/
-/*void print_edge{{{*/
-void print_edge(igraph_t *graph)
-{
-    int size_from,size_to;
-    size_from = igraph_vector_size(&(graph -> from ));
-    printf("size from is : %d\n",size_from);
-    size_to = igraph_vector_size(&(graph -> to));
-    printf("size to is : %d\n",size_to);
-    FILE *fp;
-    fp= fopen("edge.txt","w");
-    assert(fp != NULL);
-    int arr[6];
-    for(int i = 0;i < size_from;i++)
-    {
-        arr[0] = VECTOR(graph -> from)[i];
-        arr[1] = VECTOR(graph -> to)[i];
-        arr[2] = VECTOR(graph -> oi)[i];
-        arr[3] = VECTOR(graph -> ii)[i];
-        arr[4] = VECTOR(graph -> os)[i];
-        arr[5] = VECTOR(graph -> is)[i];
-        for(int i = 0;i < 6;i++)
-        {
-            fprintf(fp,"%4d ",arr[i]);
-            
-        }
-        fprintf(fp,"\n");
-    }
-    fclose(fp);
+#define  nn 10
+#define total (1.0*RAND_MAX)
 
+/*void print_edge{{{*/
+void print_edge(igraph_t graph)
+{
+    int size;
+    FILE *fp;
+    fp= fopen("graph.txt","w");
+    assert(fp != NULL);
+
+    size = igraph_vector_size(&(graph.to));
+    fprintf(fp,"size to is %d\n",size);
+    size = igraph_vector_size(&(graph.from));
+    fprintf(fp,"size from is %d\n",size);
+    int len[6];
+    igraph_vector_t *vector[6];
+    len[0]    = igraph_vector_size(&(graph.to));
+    len[1]    = igraph_vector_size(&(graph.from));
+    len[2]    = igraph_vector_size(&(graph.oi));
+    len[3]    = igraph_vector_size(&(graph.os));
+    len[4]    = igraph_vector_size(&(graph.ii));
+    len[5]    = igraph_vector_size(&(graph.is));
+    vector[0] = &(graph.to);
+    vector[1] = &(graph.from);
+    vector[2] = &(graph.oi);
+    vector[3] = &(graph.os);
+    vector[4] = &(graph.ii);
+    vector[5] = &(graph.is);
+    char *className[6] = {"To :","From :","Oi",
+                          "Os :","Ii :","Is"};
+    for(int i = 0;i < 6;i++)
+    {
+        fprintf(fp,"%s\n",className[i]);
+        for(int j = 0;j < len[i];j++)
+        {
+            fprintf(fp,"%d\n",(int)VECTOR(*vector[i])[j]);
+        }
+    }
+    
+    fclose(fp);
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    igraph_real_t avg_path;
     igraph_t graph;
-    igraph_vector_t dimvector,edges;
+    igraph_vector_t edge;
+    float p = 0.3;
 
-    igraph_vector_init(&dimvector,2);
-    const int len = 5;
-    VECTOR(dimvector)[0] = 5;
-    VECTOR(dimvector)[1] = 5;
-
-    igraph_lattice(&graph,&dimvector,0 ,
-            IGRAPH_UNDIRECTED,0,1);
-
-    // igraph_rng_seed(igraph_rng_default(),30);
-    srand(time(NULL)); 
-    const int vector_len = 20;
-    igraph_vector_init(&edges,vector_len);
-    int size = igraph_vcount(&graph);
-    printf("size = %d\n",size);
-    for(int i = 0;i < igraph_vector_size(&edges);i++)
+    srand(1993); 
+    int arr[40];
+    float x1;
+    int num = 0;
+    for(int i = 0;i < nn - 1;i++)
     {
-        VECTOR(edges)[i] = rand() % size;
+        for(int j = i + 1;j < nn;j++)
+        {
+            x1 = rand() / total;
+            if ( x1 < p )
+            {
+                arr[num]     = i;
+                arr[num + 1] = j;
+                num += 2; 
+            }
+        }
     }
-    
-    igraph_average_path_length(&graph,&avg_path,
-            IGRAPH_UNDIRECTED,1);
-    printf("Average path length (lattice): %f\n",
-            (double )avg_path);
+    igraph_vector_init(&edge,num);
+    for(int i = 0;i < num;i++)
+    {
+                VECTOR(edge)[i] = arr[i];
+    }
+    igraph_create(&graph,&edge,0,IGRAPH_DIRECTED);
+    int num_edge = VECTOR(edge)[16];
+    printf("num_edge is %d\n",num_edge);
 
-    igraph_add_edges(&graph,&edges,0);
-    igraph_average_path_length(&graph,&avg_path,
-            IGRAPH_UNDIRECTED,1);
-    printf("Average path length (lattice): %f\n",
-            (double )avg_path);
+    print_edge(graph);
+    const int size = 20;
+    FILE *fp;
+    fp= fopen("graph.dot","w");
+    assert(fp != NULL);
+    igraph_write_graph_dot(&graph,fp);
+    fclose(fp);
+    igraph_vector_t id;
+    igraph_vector_init(&id,nn);
+    for(int i = 0;i < nn;i++)
+    {
+        VECTOR(id)[i] = i;
+    }
+    char creator[20] = "graph.gml";
+    fp= fopen("Huang","w");
+    assert(fp != NULL);
+    igraph_write_graph_gml(&graph,fp,&id,creator);
+    fclose(fp);
 
+    igraph_vector_t vec;
 
+    igraph_vector_init(&vec,0);
+    igraph_neighbors(&graph,&vec,9,IGRAPH_ALL);
+    num = igraph_vector_size(&vec);
+    igraph_neighbors(&graph,&vec,0,IGRAPH_ALL);
+    num = igraph_vector_size(&vec);
+    printf("size = %d\n",num);
 
-    print_edge(&graph);
-    igraph_vector_destroy(&dimvector);
-    
-    igraph_vector_print(&edges);
-    igraph_vector_destroy(&edges);
+    for(int i = 0;i < num;i++)
+    {
+        printf("%d \n",(int)VECTOR(vec)[i]);
+    }
+
+    igraph_vector_print(&vec);
+    igraph_vector_destroy(&edge);
     igraph_destroy(&graph);
 }
 /*}}}*/
