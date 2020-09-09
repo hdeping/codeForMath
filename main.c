@@ -2,57 +2,176 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#define total (65536.0*32768.0) 
-#define n 1000000
-#define m 8
+#define n 200 // get n degrees between (0,2*pi)
+// some parameters
+#define pi    3.1415926
+#define beta  1.0
+#define r1    100
+#define r2    110
+#define sigma 2.0
+#define y0    50
 
-int a[100] = {};
-/*void get_random_array{{{*/
-void get_random_array()
+#define r0 ((r1 + r2) / 2)
+#define num (r2 - r1 + 1)
+double gaussian[num];
+double radius[num];
+double degrees[n];
+double x_coordinate[n][num];
+double z_coordinate[n][num];
+double intensity0[n][num];   // intensity for each point 
+double intensity1[n][num];   // intensity for each point 
+double phi[2*n];
+/*double P2{{{*/
+double P2(double x)
 {
-    srand(time(NULL)); 
-    double x1,x2;
-    int k;
+    double result;
+    result = 1.0 / 2.0 *(3*x*x - 1.0);
+    return result;
+}
+/*}}}*/
+/*double I_theta{{{*/
+double I_theta(double theta)
+{
+    double result;
+    result = 1.0 / (4.0*pi) * (1.0 + \
+            beta * P2(cos(theta)));
+    return result;
+}
+/*}}}*/
+/*void get_coordinate{{{*/
+void get_coordinate()
+{
+    for(int i = 0;i < num;i++)
+    {
+        radius[i] = 1.0*(r1+i);
+    }
+    double delta = 1.0*pi / (1.0*n);
     for(int i = 0;i < n;i++)
     {
-        x2 = 0.0;
-        for(int j = 0;j < m;j++)
+        degrees[i] = delta*i;
+    }
+    for(int i = 0;i < n;i++)
+    {
+        for(int j = 0;j < num;j++)
         {
-            x1 = rand() / total;
-            x2 += x1 ;
+            x_coordinate[i][j] = radius[j]*cos(degrees[i]);
+            z_coordinate[i][j] = radius[j]*sin(degrees[i]);
         }
-        x2 /= (1.0*m);  
-        k = floor(x2*100);
-        a[k]++;
+        
     }
+    // get phi
+    delta = 2.0*pi / (1.0*n);
+    for(int i = 0;i < 2*n;i++)
+    {
+        phi[i] = i*delta;
+    }
+    
 }
 /*}}}*/
-/*void get_random_array1{{{*/
-void get_random_array1()
+/*void get_gaussian{{{*/
+void get_gaussian()
 {
-    srand(time(NULL)); 
-    double x1,x2;
-    int k;
+    double sum;
+    sum = 0.0;
+    double tmp;
+    double factor = 1.0 / (sqrt(2*pi)*sigma);
+    for(int i = 0;i < num;i++)
+    {
+        tmp = - pow(r1 + i - r0,2) / (2*pow(sigma,2));
+        gaussian[i] = exp(tmp) * factor;
+        sum += gaussian[i]; 
+    }
+    for(int i = 0;i < num;i++)
+    {
+        gaussian[i] /= sum; 
+    }
+    
+}
+/*}}}*/
+/*void print_out{{{*/
+void print_out()
+{
+    FILE *fp;
+    /*
+     * 
+    fp= fopen("data.txt","w");
+    for(int i = 0;i < num;i++)
+    {
+        fprintf(fp,"%3d   %15.7lf\n",i+1,gaussian[i]);
+    }
+     * */
+    
+    fp= fopen("intensity.txt","w");
     for(int i = 0;i < n;i++)
     {
-        x1 = rand() / total;
-        k = floor(x1*100);
-        a[k]++;
-    }
-}
-/*}}}*/
-int main( int argc, char *argv[] ){
-    get_random_array();
-    FILE *fp;
-    char filename[20];
-    sprintf(filename,"%s%d%s","data",m,".txt");
-    fp= fopen(filename,"w");
-
-    for(int i = 0;i < 100;i++)
-    {
-        fprintf(fp,"%f %f\n",pow((i - 49),2),log(a[i]*1.0));
+        for(int j = 0;j < num;j++)
+        {
+            fprintf(fp,"%18.9lf %18.9lf %18.9lf\n",\
+                    x_coordinate[i][j] ,z_coordinate[i][j],intensity0[i][j]);
+            fprintf(fp,"%18.9lf %18.9lf %18.9lf\n",\
+                    x_coordinate[i][j] ,- z_coordinate[i][j],intensity0[i][j]);
+        }
+        
     }
     fclose(fp);
     
+
+}
+/*}}}*/
+/*void get_4d_data{{{*/
+void get_4d_data()
+{
+    FILE *fp;
+    fp= fopen("total.txt","w");
+    double x,y,z,w;
+    int count;
+    count = 0;
+    for(int i = 0;i < n;i++)
+    {
+        for(int j = 0;j < num;j++)
+        {
+            for(int k = 0;k < 2*n;k++)
+            {
+                x = radius[j]*sin(degrees[i])*cos(phi[k]);
+                z = radius[j]*sin(degrees[i])*sin(phi[k]);
+                y = radius[j]*cos(degrees[i]);
+                w = intensity0[i][j];
+                if ( abs(y) < y0 )
+                {
+                    fprintf(fp,"%18.9lf %18.9lf %18.9lf %18.9lf\n",x,y,z,w);
+                }
+                count++;
+                printf("count = %d\n",count);
+                
+            }
+            
+        }
+        
+    }
+    
+    fclose(fp);
     
 }
+/*}}}*/
+/*int main{{{*/
+int main( int argc, char *argv[] ){
+    
+    get_coordinate();
+    get_gaussian();
+    // get intensity0
+
+    for(int i = 0;i < n;i++)
+    {
+        for(int j = 0;j < num;j++)
+        {
+            intensity0[i][j] = I_theta(degrees[i])*gaussian[j];
+        }
+        
+    }
+    // print_out();
+    get_4d_data();
+    
+    return 0;
+}
+
+/*}}}*/
