@@ -3,7 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 #define m 100
-#define nn 10
+#define nn 100000
 
 
 typedef struct timeval new_time;

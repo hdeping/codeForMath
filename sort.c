@@ -3,18 +3,45 @@
 /*void heapSort{{{*/
 void heapSort(int *num)
 {
-    int layer ;
-    layer = (int)(log2(nn*1.0)) + 1;
-    makeheap(num,nn);
-    makeheap(num,nn);
-    for(int i = 0;i < nn - 2;i++)
-    {
-        swap(num,num+nn-1-i);
-        adjustHeap(num,nn-1-i);
-        print_num(num,nn);
-    }
-    heapTest(num,nn);
+    //build a headp
+    BuildingHeap(num,nn);  
+    // adjust the list from the last element
+    for (int i = nn - 1; i > 0; --i)  
+    {  
+        swap(num,num+i);
+        HeapAdjust(num,0,i);  
+  }  
 }
+/*}}}*/
+/*void HeapAdjust{{{*/
+void HeapAdjust(int *num,int s, int length)  
+{  
+    int tmp  = num[s];  
+    int child = 2*s+1; //左孩子结点的位置。(i+1 为当前调整结点的右孩子结点的位置)  
+    while (child < length) {  
+        if(child+1 <length && num[child]<num[child+1]) { 
+            // 如果右孩子大于左孩子(找到比当前待调整结点大的孩子结点)  
+            ++child ;  
+        }  
+        if(num[s]<num[child]) {  // 如果较大的子结点大于父结点  
+            num[s] = num[child]; // 那么把较大的子结点往上移动，替换它的父结点  
+            s = child;       // 重新设置s ,即待调整的下一个结点的位置  
+            child = 2*s+1;  
+        }  else {            // 如果当前待调整结点大于它的左右孩子，则不需要调整，直接退出  
+             break;  
+        }  
+        num[s] = tmp;         // 当前待调整的结点放到比其大的孩子结点位置上  
+    }  
+    // print_num(num,length);  
+}  
+/*}}}*/
+/*void BuildingHeap{{{*/
+void BuildingHeap(int *num, int length)  
+{   
+    //最后一个有孩子的节点的位置 i=  (length -1) / 2  
+    for (int i = (length -1) / 2 ; i >= 0; --i)  
+        HeapAdjust(num,i,length);  
+}  
 /*}}}*/
 /*void makeheap{{{*/
 void makeheap(int *num,int size)

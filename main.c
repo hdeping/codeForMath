@@ -8,6 +8,7 @@ void run()
     for(int i = 0;i < m;i++)
     {
         printf("-------i = %d -------\n",i);
+        printf("nn = %d\n",nn);
         p = num[i];
         sortTest(p);
         new_time start,end;
@@ -38,7 +39,7 @@ int main( int argc,char *argv[]){
     srand(1991); 
     getdat(nn);
     readdat(nn);
-    // run();
-    test();
+    run();
+    // test();
 }
 /*}}}*/
