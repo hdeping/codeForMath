@@ -1,42 +1,63 @@
 #include "head.h"
 
-/*void perm{{{*/
-void perm(int *list, int k, int m) 
-{     
-    int i;     
-    if(k > m)     
-    {          
-        for(i = 0; i <= m; i++)
+#define swap(x,y)  tmp=(x);(x)=(y);(y)=tmp
+
+int countNumber = 0;  
+int tmp;
+FILE *fp;
+
+/*void generate{{{*/
+void generate(int *list ,int len)
+{
+    int *arr = (int *)malloc(sizeof(int)*len);
+    for(int i = 0;i < len;i++)
+    {
+        arr[i] = 0;
+    }
+    fwrite(list,sizeof(int)*len,1,fp);
+    int i = 1;
+    while ( i < len )
+    {
+        if ( arr[i] < i )
         {
-            fprintf(fp,"%d ", list[i]);         
+            if ( i%2 == 0  )
+            {
+                 swap(list[0],list[i]);
+            }
+            else
+            {
+                swap(list[arr[i]],list[i]);
+            }
+            fwrite(list,sizeof(int)*len,1,fp);
+            arr[i]++;
+            i = 1;
         }
-        fprintf(fp,"\n");         
-        countNumber++;
-    }     
-    else     
-    {         
-        for(i = k; i <= m; i++)         
-        {             
-            swap(list[k], list[i]);             
-            perm(list, k + 1, m);             
-            swap(list[k], list[i]);         
-        }     
-    } 
-} 
+        else
+        {
+            arr[i] = 0;
+            i++;
+        }
+    }
+    free(arr);
+}
 /*}}}*/
 /*int main{{{*/
-int main() 
-{     
-    fp= fopen("data.txt","w");
+int main( int argc,char *argv[])
+{
+    int len = 10;
+    char filename[20];
+    sprintf(filename,"binary%d.dat",len);
+    fp= fopen(filename,"wb");
     assert(fp != NULL);
-    int list[10] ;
-    for(int i = 0;i < 10;i++)
+    int *list;
+    list = (int *)malloc(sizeof(int)*len);
+    for(int i = 0;i < len;i++)
     {
         list[i] = i+1;
     }
-    perm(list, 0, 9);     
-    printf("count Number :%d\n", countNumber);     
+    generate(list,len);
+    free(list);
     fclose(fp);
-    return 0; 
-}  
+    return 0;
+}
 /*}}}*/
