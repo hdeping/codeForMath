@@ -1,5 +1,5 @@
 CC = gcc -O3
-option = -o exe -lm -lfftw3
+option = -o exe -lm -lfftw3f
 object = main.o
 source = main.c
 run:$(object)

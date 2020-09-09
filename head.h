@@ -4,4 +4,5 @@
 #include <math.h>
 #define pi 3.141592653
 
+#define n 100
 
