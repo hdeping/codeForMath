@@ -1,81 +1,92 @@
-#include <igraph/igraph.h>
+#include "head.h"
+/*void before{{{*/
+void before()
+{
+    int size ;
+    igraph_t g;
+    size = sizeof(igraph_t);
+    printf("size of igraph_t = %d\n",size);
+    size = sizeof(igraph_vector_t);
+    printf("size of igraph_vector_t= %d\n",size);
+    size = sizeof(igraph_adjacency_t);
+    printf("size of igraph_adjacency_t = %d\n",size);
+}
+/*}}}*/
+/*void print_edge{{{*/
+void print_edge(igraph_t *graph)
+{
+    int size_from,size_to;
+    size_from = igraph_vector_size(&(graph -> from ));
+    printf("size from is : %d\n",size_from);
+    size_to = igraph_vector_size(&(graph -> to));
+    printf("size to is : %d\n",size_to);
+    FILE *fp;
+    fp= fopen("edge.txt","w");
+    assert(fp != NULL);
+    int arr[6];
+    for(int i = 0;i < size_from;i++)
+    {
+        arr[0] = VECTOR(graph -> from)[i];
+        arr[1] = VECTOR(graph -> to)[i];
+        arr[2] = VECTOR(graph -> oi)[i];
+        arr[3] = VECTOR(graph -> ii)[i];
+        arr[4] = VECTOR(graph -> os)[i];
+        arr[5] = VECTOR(graph -> is)[i];
+        for(int i = 0;i < 6;i++)
+        {
+            fprintf(fp,"%4d ",arr[i]);
+            
+        }
+        fprintf(fp,"\n");
+    }
+    fclose(fp);
 
+}
+/*}}}*/
 /*int main{{{*/
-int main() {
-  igraph_t g;
-  igraph_vector_t outdeg, indeg, vec;
-  igraph_bool_t is_simple;
+int main( int argc,char *argv[])
+{
+    igraph_real_t avg_path;
+    igraph_t graph;
+    igraph_vector_t dimvector,edges;
 
-  igraph_vector_init_real(&outdeg, 
-          10, 3.0, 3.0, 3.0, 3.0, 3.0, 
-          3.0, 3.0, 3.0, 3.0, 3.0);
-  igraph_vector_init_real(&indeg, 
-          10, 4.0, 4.0, 2.0, 2.0, 4.0, 
-          4.0, 2.0, 2.0, 3.0, 3.0);
+    igraph_vector_init(&dimvector,2);
+    const int len = 5;
+    VECTOR(dimvector)[0] = 5;
+    VECTOR(dimvector)[1] = 5;
 
-  igraph_vector_init(&vec, 0);
+    igraph_lattice(&graph,&dimvector,0 ,
+            IGRAPH_UNDIRECTED,0,1);
 
-  /* checking the simple method, undirected graphs */
-  igraph_degree_sequence_game(&g, &outdeg, 0, IGRAPH_DEGSEQ_SIMPLE);
-  if (igraph_is_directed(&g) || igraph_vcount(&g) != 10)
-	return 1;
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_OUT, 1))
-	return 2;
-  igraph_vector_print(&vec);
-  igraph_destroy(&g);
+    // igraph_rng_seed(igraph_rng_default(),30);
+    srand(time(NULL)); 
+    const int vector_len = 20;
+    igraph_vector_init(&edges,vector_len);
+    int size = igraph_vcount(&graph);
+    printf("size = %d\n",size);
+    for(int i = 0;i < igraph_vector_size(&edges);i++)
+    {
+        VECTOR(edges)[i] = rand() % size;
+    }
+    
+    igraph_average_path_length(&graph,&avg_path,
+            IGRAPH_UNDIRECTED,1);
+    printf("Average path length (lattice): %f\n",
+            (double )avg_path);
 
-  /* checking the Viger-Latapy method, undirected graphs */
-  igraph_degree_sequence_game(&g, &outdeg, 0, IGRAPH_DEGSEQ_VL);
-  if (igraph_is_directed(&g) || igraph_vcount(&g) != 10)
-	return 3;
-  if (igraph_is_simple(&g, &is_simple) || !is_simple)
-	return 4;
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_OUT, 0))
-	return 5;
-  igraph_vector_print(&vec);
-  igraph_destroy(&g);
+    igraph_add_edges(&graph,&edges,0);
+    igraph_average_path_length(&graph,&avg_path,
+            IGRAPH_UNDIRECTED,1);
+    printf("Average path length (lattice): %f\n",
+            (double )avg_path);
 
-  /* checking the simple method, directed graphs */
-  igraph_degree_sequence_game(&g, &outdeg, &indeg, IGRAPH_DEGSEQ_SIMPLE);
-  if (!igraph_is_directed(&g) || igraph_vcount(&g) != 10)
-	return 6;
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_OUT, 1))
-	return 7;
-  igraph_vector_print(&vec);
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_IN, 1))
-	return 8;
-  igraph_vector_print(&vec);
-  igraph_destroy(&g);
 
-  /* checking the no multiple edges method, undirected graphs */
-  igraph_degree_sequence_game(&g, &outdeg, 0, IGRAPH_DEGSEQ_SIMPLE_NO_MULTIPLE);
-  if (igraph_is_directed(&g) || igraph_vcount(&g) != 10)
-	return 9;
-  if (igraph_is_simple(&g, &is_simple) || !is_simple)
-	return 10;
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_OUT, 1))
-	return 11;
-  igraph_vector_print(&vec);
-  igraph_destroy(&g);
 
-  /* checking the no multiple edges method, directed graphs */
-  igraph_degree_sequence_game(&g, &outdeg, &indeg, IGRAPH_DEGSEQ_SIMPLE_NO_MULTIPLE);
-  if (!igraph_is_directed(&g) || igraph_vcount(&g) != 10)
-	return 12;
-  if (igraph_is_simple(&g, &is_simple) || !is_simple)
-	return 13;
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_OUT, 1))
-	return 14;
-  igraph_vector_print(&vec);
-  if (igraph_degree(&g, &vec, igraph_vss_all(), IGRAPH_IN, 1))
-	return 15;
-  igraph_vector_print(&vec);
-  igraph_destroy(&g);
-
-  igraph_vector_destroy(&vec);
-  igraph_vector_destroy(&outdeg);
-  igraph_vector_destroy(&indeg);
-
-  return 0;
+    print_edge(&graph);
+    igraph_vector_destroy(&dimvector);
+    
+    igraph_vector_print(&edges);
+    igraph_vector_destroy(&edges);
+    igraph_destroy(&graph);
 }
 /*}}}*/
