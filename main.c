@@ -1,135 +1,59 @@
-#include "head.h"
-#define n 10000
-#define pi 3.141592653
+#include "stdio.h"
+#include "stdlib.h"
+#include "math.h"
+#include <assert.h>
 
-/*double  gety{{{*/
-double  gety(double theta)
-{
-    double res;
-    res = pow(sin(theta),3);
-    res += 3.0*sin(theta)*pow(cos(theta),3)/
-        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
-    return res;
-}
-/*}}}*/
-/*double  getx{{{*/
-double  getx(double theta)
-{
-    double res;
-    res = pow(cos(theta),3);
-    res += 3.0*cos(theta)*pow(sin(theta),3)/
-        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
-    return res;
-}
-/*}}}*/
-/*double func{{{*/
-double func(double theta)
-{
-    double res;
-    res = pow(sin(theta),3);
-    res += 3.0*sin(theta)*pow(cos(theta),3)/
-        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
-    res -= pow(cos(theta),3);
-    res -= 3.0*cos(theta)*pow(sin(theta),3)/
-        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
-    return res;
-}
-/*}}}*/
-/*void solve{{{*/
-void solve(double *a,double *b)
-{
-    double middle;
-    middle = (*a + *b) / 2.0;
-    if ( func(middle) < 0.0 )
-    {
-        *a = middle;
-    }
-    else
-    {
-        *b = middle;
-    }
-}
-/*}}}*/
-/*void cal1{{{*/
-void cal1()
-{
-    double a = 0.0;
-    double b = pi/4;
-    while ( b - a > 1E-8 )
-    {
-        solve(&a,&b);
-    }
-    printf("a = %lf\n",a);
-    printf("b = %lf\n",b);
-    
-    printf("%lf\n",pi/a);
-    printf("%lf\n",func(a));
-    printf("%lf\n",func(pi/2 - a));
 
-    // get calculus
-    double arrx[n];
-    double arry[n];
-    double delta = a/n;
-    for(int i = 0;i < n;i++)
-    {
-        double theta = i*delta;
-        arrx[i] = getx(theta);
-        arry[i] = gety(theta);
-    }
-    double calculus = 0.0;
-    for(int i = 0;i < n - 1;i++)
-    {
-        delta = (arry[i+1]-  arry[i]);
-        calculus += arrx[i]*delta;
-    }
-    printf("calculus is %lf\n",calculus);
-}
-/*}}}*/
-/*void cal2{{{*/
-void cal2()
-{
-    double a = 0.0;
-    double b = pi/4;
-    while ( b - a > 1E-8 )
-    {
-        solve(&a,&b);
-    }
-    printf("a = %lf\n",a);
-    printf("b = %lf\n",b);
-    
-    printf("%lf\n",pi/a);
-    printf("%lf\n",func(a));
-    printf("%lf\n",func(pi/2 - a));
+#define N 10000
+#define freq 1
 
-    // get calculus
-    double arrx[n];
-    double arry[n];
-    double delta = (pi/4.0 - a)/n;
-    double coef = sqrt(0.5);
-    for(int i = 0;i < n;i++)
-    {
-        double theta = a + i*delta;
-        double tmp1 = getx(theta);
-        double tmp2 = gety(theta);
-        arrx[i] = coef*(tmp1   + tmp2);
-        arry[i] = coef*(- tmp1 + tmp2);
-    }
-    printf("begin %lf,%lf\n",arrx[0],arry[0]);
-    printf("end   %lf,%lf\n",arrx[n - 1],arry[n - 1]);
-
-    double calculus = 0.0;
-    for(int i = 0;i < n - 1;i++)
-    {
-        delta = (arrx[i+1]-  arrx[i]);
-        calculus += arry[i]*delta;
-    }
-    printf("calculus is %lf\n",calculus);
-}
-/*}}}*/
-/*int main{{{*/
-int main( int argc,char *argv[])
+int main(int argc,char **argv)
 {
-    cal1();
-    cal2();
+    if ( argc == 1  )
+    {
+        printf("Please input a file\n");
+        printf("For Example: '<command> <data.file>'\n");
+        return ;
+    }
+    double c = atof(argv[1])/10.0;
+    int i=0;
+    double x0,y0,z0,x1,y1,z1;
+    double h = 0.01;
+    double a = 10.0;
+    double b = 28.0;
+    // double c = 8.0 / 3.0;
+
+    x0 = 0.1;
+    y0 = 0;
+    z0 = 0;
+    FILE *fp,*fp1,*fp2,*fp3;
+    fp = fopen("lorentzXY.txt","w");
+    fp1= fopen("lorentzXZ.txt","w");
+    fp2= fopen("lorentzYZ.txt","w");
+    fp3= fopen("lorentz.txt","w");
+    assert(fp  != NULL);
+    assert(fp1 != NULL);
+    assert(fp2 != NULL);
+    assert(fp3 != NULL);
+
+    for (i=0;i<N;i++) {
+       x1 = x0 + h * a * (y0 - x0);
+       y1 = y0 + h * (x0 * (b - z0) - y0);
+       z1 = z0 + h * (x0 * y0 - c * z0);
+       x0 = x1;
+       y0 = y1;
+       z0 = z1;
+       // if (i % freq == 0)
+       if (i > 100)
+       {
+          fprintf(fp ,"%g,%g\n",x0,y0);
+          fprintf(fp1,"%g,%g\n",x0,z0);
+          fprintf(fp2,"%g,%g\n",y0,z0);
+          fprintf(fp3,"%g,%g,%g\n",x0,y0,z0);
+       }
+    }
+    fclose(fp);
+    fclose(fp1);
+    fclose(fp2);
+    fclose(fp3);
 }
-/*}}}*/

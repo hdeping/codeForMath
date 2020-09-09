@@ -1,5 +1,5 @@
 CC = gcc -g
-option = -o exe -lm
+option = -o exe
 object = main.o
 source = main.c
 run:$(object)
