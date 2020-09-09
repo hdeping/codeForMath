@@ -1,3 +1,4 @@
-run:
-	gcc -g main.c -o exe
+object=main.o day.o
+run:$(object)
+	gcc -g -o exe $(object)
 	./exe
