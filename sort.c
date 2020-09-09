@@ -1,44 +1,81 @@
 #include "sort.h"
 
-/*void selectSort{{{*/
-void selectSort(int *num)
+/*void heapSort{{{*/
+void heapSort(int *num)
 {
-    // print_num(num);
-    for(int i = 0;i < nn/2;i++)
+    int layer ;
+    layer = (int)(log2(nn*1.0)) + 1;
+    makeheap(num,nn);
+    makeheap(num,nn);
+    for(int i = 0;i < nn - 2;i++)
     {
-        int min  = i;
-        int last = nn - i - 1;
-        int max1 = last;
-        for(int j = i;j < last+1;j++)
-        {
-            if ( num[j] < num[min] )
-            {
-                min = j;
-            }
-            if ( num[j] > num[max1] )
-            {
-                max1 = j;
-            }
-        }
-        bool p1,p2;
-        p1 = ( i == max1  ) ;
-        p2 = ( last == min );
-        if ( p1 && p2 )
-        {
-            swap(num+max1,num+last);
-        }
-        else if ( p1 && (!p2) )
-        {
-            swap(num+max1,num+last);
-            swap(num+min,num+i);
-        }
-        else
-        {
-            swap(num+min,num+i);
-            swap(num+max1,num+last);
-        }
-        // print_num(num);
+        swap(num,num+nn-1-i);
+        adjustHeap(num,nn-1-i);
+        print_num(num,nn);
     }
+    heapTest(num,nn);
+}
+/*}}}*/
+/*void makeheap{{{*/
+void makeheap(int *num,int size)
+{
+    int node = (size - 1)/2;
+    int child[2];
+    for(int i = node;i >= 0;i--)
+    {
+        child[0] = 2*i+1;
+        child[1] = child[0] + 1;
+        if ( child[1] == size  )
+        {
+            if ( num[child[0]] < num[i] )
+            {
+                swap(num+child[0],num+i);
+            }
+            continue; 
+        }
+        int min = i;
+        for(int j = 0;j < 2;j++)
+        {
+            if ( num[child[j]] < num[min] )
+            {
+                min = child[j];
+            }
+        }
+        if ( min != i  )
+        {
+            swap(num+min,num+i);
+        }
+    }
+}
+/*}}}*/
+/*void adjustHeap{{{*/
+void adjustHeap(int *num,int size)
+{
+    int node = (size-1)/2;
+    int min = 0;
+    int i;
+    printf("size = %d,node = %d\n",size,node);
+    
+    do
+    {
+        // printf("min = %d\n",min);
+        i = min;
+        // printf("i = %d\n",i);
+        int left,right;
+        left  = 2*i+1;
+        right = left + 1;
+        if ( num[left] < num[min] )
+        {
+            min = left;
+        }
+        if ( num[right] < num[min] )
+        {
+            min = right;
+        }
+        swap(num+min,num+i);
+        // printf("i = %d,min = %d\n",i,min);
+    }
+    while(!(min == i || min>node));
 }
 /*}}}*/
 /*int sortTest{{{*/
@@ -87,6 +124,38 @@ int sortTest(int *num)
     {
         printf("there is no order\n");
         return 0;
+    }
+}
+/*}}}*/
+/*void heapTest{{{*/
+void heapTest(int *num,int size)
+{
+    int tmp = 0;
+    for(int i = 0;i < size;i++)
+    {
+        int i1,i2;
+        i1 = 2*i+1;
+        i2 = i1+1;
+        if ( num[i] > num[i1])
+        {
+            tmp++;
+        }
+        if ( i2 >= size  )
+        {
+            break;
+        }
+        if (num[i] > num[i2])
+        {
+            tmp++;
+        }
+    }
+    if ( tmp == 0  )
+    {
+        printf("Minimal Heap!\n");
+    }
+    else
+    {
+        printf("NOT Heap\n");
     }
 }
 /*}}}*/
@@ -140,13 +209,51 @@ void print_time(double *num)
 }
 /*}}}*/
 /*void print_num{{{*/
-void print_num(int *num)
+void print_num(int *num,int size)
 {
-    for(int i = 0;i < nn;i++)
+    int layer;
+    layer = (int)(log2(size*1.0)) + 1;
+    int *blankNum;
+    int *count;
+    blankNum = (int *)malloc(sizeof(int)*layer);
+    count = (int *)malloc(sizeof(int)*layer);
+    count[0] = 0;
+    blankNum[layer - 1] = 0;
+    for(int i = 0;i < layer - 1;i++)
     {
-        printf("%d ",num[i]);
+        count[i+1] = 2*count[i] + 1;
+        int j = layer-2-i;
+        blankNum[j] = count[i]*4+2;
     }
-    printf("\n");
+    int uplimit;
+    // print the result
+    for(int i = 0;i < layer;i++)
+    {
+        if ( i == layer - 1  )
+        {
+            uplimit = size;
+        }
+        else
+        {
+            uplimit = count[i + 1];
+        }
+        // print blanks in the head
+        for(int j = 0;j < blankNum[i];j++)
+        {
+            printf(" ");
+        }
+        // print number
+        for(int j = count[i];j < uplimit;j++)
+        {
+            printf("%4d",num[j]);
+            for(int k = 0;k < count[layer - 1 - i];k++)
+            {
+                printf("    ");
+            }
+        }
+        printf("\n\n");
+    }
+    free(count);
 }
 /*}}}*/
 /*double get_time{{{*/
@@ -177,7 +284,7 @@ void analyze_time(double *time)
         average += time[i]; 
     }
     average /= m;
-    printf("average time :%lf\n",average);
+    printf("average time :%lf\n",time[m-2]);
     standard = 0.0;
     for(int i = 0;i < m;i++)
     {
@@ -185,7 +292,10 @@ void analyze_time(double *time)
     }
     standard = sqrt(standard);
     printf("standard error:%lf\n",standard);
+    /*
+     * 
     printf("time ranges in (%lf,%lf)\n",
               average-2*standard,average+2*standard);
+     * */
 }
 /*}}}*/
