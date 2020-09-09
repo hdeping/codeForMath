@@ -1,104 +1,54 @@
 #include "head.h"
 
-/*void print_vector{{{*/
-void print_vector(igraph_vector_t *v,FILE *fp)
-{
-    for(int i = 0;i < igraph_vector_size(v);i++)
-    {
-        fprintf(fp,"%li \n",(long int)VECTOR(*v)[i]);
-        
-    }
-}
-/*}}}*/
-/*void run{{{*/
-void run()
-{
-    igraph_t g;
-    igraph_vector_t v,seq;
-    int ret;
-
-    // creating graph
-
-    igraph_vector_init(&v,8);
-    int arr[8] = {0,1,2,2,1,2,3,2};
-    for(int i = 0;i < 8;i++)
-    {
-        VECTOR(v)[i] = arr[i];
-    }
-    igraph_create(&g,&v,0,IGRAPH_DIRECTED);
-
-    printf("out no-loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_OUT,IGRAPH_NO_LOOPS);
-    print_vector(&v,stdout);
-
-    printf("out loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_OUT,IGRAPH_LOOPS);
-    print_vector(&v,stdout);
-
-    printf("in no-loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_IN,IGRAPH_NO_LOOPS);
-    print_vector(&v,stdout);
-
-    printf("in loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_IN,IGRAPH_LOOPS);
-    print_vector(&v,stdout);
-
-    printf("all no-loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_ALL,IGRAPH_NO_LOOPS);
-    print_vector(&v,stdout);
-
-    printf("all loops\n");
-    igraph_degree(&g,&v,igraph_vss_all(),
-            IGRAPH_ALL,IGRAPH_LOOPS);
-    print_vector(&v,stdout);
-
-    igraph_set_error_handler(igraph_error_handler_ignore);
-
-    /**
-     * consistency check of the handshaking lemma
-     * If d is the sum of all vertex degrees, then d = 2|E|
-     * */
-    int ndeg = 0;
-    igraph_integer_t mdeg,nedges;
-    nedges = igraph_ecount(&g);
-    for(int i = 0;i < igraph_vector_size(&v);i++)
-    {
-        ndeg += (long int)VECTOR(v)[i]; 
-    }
-    if ( ndeg != 2*nedges  )
-    {
-        printf("Something must be wrong about degree\n");
-        return ;
-    }
-    igraph_vector_init(&seq,3);
-    VECTOR(seq)[0] = 2;
-    VECTOR(seq)[1] = 0;
-    VECTOR(seq)[2] = 2;
-    printf("degree\n");
-    igraph_degree(&g,&v,igraph_vss_vector(&seq),
-            IGRAPH_ALL,IGRAPH_LOOPS);
-    print_vector(&v,stdout);
-
-    // Errors
-    ret = igraph_degree(&g,&v,igraph_vss_vector(&seq),
-            (igraph_neimode_t)0,IGRAPH_LOOPS);
-    if ( ret != IGRAPH_EINVMODE  )
-    {
-        return ;
-    }
-    VECTOR(seq)[0] = 4;
-    
-    igraph_destroy(&g);
-}
-/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    run();
+    igraph_t g;
+    igraph_vector_t v,v2;
+    
+    igraph_barabasi_game(&g,10,1,2,0,0,1,1,
+            IGRAPH_BARABASI_BAG,0);
+    if ( igraph_ecount(&g) != 18  )
+    {
+        return 1;
+    }
+    if ( igraph_ecount(&g) != 10  )
+    {
+        return 2;
+    }
+    if ( igraph_ecount(&g) == 0  )
+    {
+        return 3;
+    }
+
+    igraph_vector_init(&v,0);
+    igraph_get_edgelist(&g,&v,0);
+    for(int i = 0;i < igraph_ecount(&g);i++)
+    {
+        if ( VECTOR(v)[2*i] <= VECTOR(v)[2*i+1]  )
+        {
+            return 4;
+        }
+    }
+    igraph_destroy(&g);
+
+    // out degree sequence
+
+    igraph_vector_resize(&v,10);
+    int arr[10] = {0,1,3,3,4,5,6,7,8,9};
+    for(int i = 0;i < 10;i++)
+    {
+        VECTOR(v)[i] = arr[i];
+    }
+    igraph_barabasi_game(&g,10,1,0,&v,0,1,1,
+            IGRAPH_BARABASI_BAG,0);
+    if ( igraph_ecount(&g) != igraph_vector_sum(&v)  )
+    {
+        return 5;
+    }
+    igraph_destroy(&g);
+    igraph_vector_destroy(&v);
+    igraph_vector_destroy(&v2);
+    
 }
 /*}}}*/
