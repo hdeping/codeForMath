@@ -1,5 +1,5 @@
 #include "head.h"
-#define n 300
+#define n 100
 #define total (1.0*RAND_MAX)
 
 /*double getx{{{*/
@@ -8,11 +8,11 @@ double getx(double *num,double alpha)
     double an = rand() / total;
     for(int i = 0;i < n;i++)
     {
-        an = alpha*an*an*an + (1.0 - alpha)*an;
+        an = 1.0 - alpha*an*an*an;
     }
     for(int i = 0;i < n;i++)
     {
-        an = alpha*an*an*an + (1.0 - alpha)*an;
+        an = 1.0 - alpha*an*an*an;
         num[i] = an;
     }
     return an;
@@ -29,8 +29,10 @@ int main( int argc,char *argv[])
     assert(fp != NULL);
     srand(time(NULL)); 
 
-    for(int i = 0;i < 250;i++)
+    for(int i = 0;i < 300;i++)
     {
+        /**
+         * 
         if ( i < 100)
         {
             alpha = -2 + 0.01*(i + 1);
@@ -43,6 +45,8 @@ int main( int argc,char *argv[])
         {
             alpha = 3+0.01*(i - 150);
         }
+         * */
+        alpha = - 1.5 + 0.01*i;
         getx(num,alpha);
         for(int j = 0;j < n;j++)
         {
