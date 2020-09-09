@@ -1,52 +1,76 @@
 #include "head.h"
 
-double kb = 1.38E-23;
-double T  = 298;
-double eV = 1.6E-19;
-double unit;
-
-/*void print_array{{{*/
-void print_array(int *a)
+/*double integral{{{*/
+double integral(double a,double b,double (* fun)(double))
 {
+    static int n = 10000;
+    double delta = (b - a) / (1.0*n);
+    double x;
+    double res = 0.0;
     for(int i = 0;i < n;i++)
     {
-        printf("%d,%d\n",i,a[i]);
-        
+        x = a + i*delta;
+        res += delta*(* fun)(x); 
     }
+    return res;
 }
 /*}}}*/
-/*double get_delta_free_energy{{{*/
-double get_delta_free_energy(int *a)
+/*double f1{{{*/
+double f1(double x)
 {
     double res;
-    res = 0.0;
-    for(int i = 0;i < n;i++)
-    {
-        res += exp(- 1.0*a[i]) ;
-    }
-    res /= (1.0*n);
-    res = - log(res);
+    res = 1.0 + x;
+    return res;
+}
+/*}}}*/
+/*double f2{{{*/
+double f2(double x)
+{
+    double res;
+    res = 3.0 + 2.0*x;
+    return res;
+}
+/*}}}*/
+/*double f3{{{*/
+double f3(double x)
+{
+    double res;
+    res = 1.0 + exp(x);
+    return res;
+}
+/*}}}*/
+/*double f4{{{*/
+double f4(double x)
+{
+    double res;
+    res = pow(1.0 + x,2.0);
+    return res;
+}
+/*}}}*/
+/*double f5{{{*/
+double f5(double x)
+{
+    double res;
+    res = pow(x,3.0);
     return res;
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
-    int *a;
-    a = (int *)malloc(sizeof(int)*n);
-    unit = kb*T/eV;
-    printf("unit    = %g\n",unit);
-    srand(time(NULL)); 
-    for(int i = 0;i < n;i++)
-    {
-        a[i] = rand() % 20 + 1;
-    }
-    //print_array(a);
-    double deltaFree;
-    deltaFree = get_delta_free_energy(a);
-    printf("Delta Free Energy is %lf\n",deltaFree);
-    
-    free(a);
+    double a,b,c;
+    double (* fun)(double);
+    a = 0.0;
+    b = 1.0;
+    fun = f1;
+    printf("c = %lf\n",integral(a,b,fun));
+    fun = f2;
+    printf("c = %lf\n",integral(a,b,fun));
+    fun = f3;
+    printf("c = %lf\n",integral(a,b,fun));
+    fun = f4;
+    printf("c = %lf\n",integral(a,b,fun));
+    fun = f5;
+    printf("c = %lf\n",integral(a,b,fun));
     
 }
 /*}}}*/
-
