@@ -1,6 +1,6 @@
 #include "head.h"
 
-   float factor[3] = {log(2.0),log(3.0),log(5.0)};
+   float factor[2] = {log(3.0)/log(2.0),log(5.0)/log(2.0)};
 
 /*void printNum{{{*/
 void printNum(int m)
@@ -14,12 +14,12 @@ void printNum(int m)
 int isBig(sequence res1,sequence res2)
 {
     float sum[2];
-    sum[0]  = factor[0]*res1.ii;
-    sum[0] += factor[1]*res1.jj;
-    sum[0] += factor[2]*res1.kk;
-    sum[1]  = factor[0]*res2.ii;
-    sum[1] += factor[1]*res2.jj;
-    sum[1] += factor[2]*res2.kk;
+    sum[0]  = res1.ii;
+    sum[0] += factor[0]*res1.jj;
+    sum[0] += factor[1]*res1.kk;
+    sum[1]  = res2.ii;
+    sum[1] += factor[0]*res2.jj;
+    sum[1] += factor[1]*res2.kk;
     if ( sum[0] > sum[1] )
     {
         return 1;
@@ -72,8 +72,8 @@ int main( int argc,char *argv[])
 
 
    sequence *res1500;
-   int maxNum[3] = {19,13,9};
-   int num = 19*13*9;
+   int maxNum[3] = {50,25,13};
+   int num = maxNum[0]*maxNum[1]*maxNum[2];
    res1500 = (sequence *)malloc(sizeof(sequence)*num);
    int ii,jj,kk;
    int count = 0;
@@ -91,7 +91,13 @@ int main( int argc,char *argv[])
        }
    }
    sort(res1500,num);
-   printSeq(res1500,num);
+   printSeq(res1500,2000);
+   sequence res1 = {20,0,0};
+   sequence res2 = {6,8,6};
+   printf("%d\n",isBig(res1,res2));
+   
+   printf("%f,%f\n",factor[0],factor[1]);
+   
    
    free(res1500);
    
