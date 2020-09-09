@@ -1,10 +1,9 @@
-CXX = g++ -g
-option = -o exe -lm -lGL -lGLU -lglut 
-object += opengl.o
-object += main.o
-source = $(object:.o=.cpp)
+CC = gcc -g
+option = -o exe
+object = main.o
+source = main.c
 run:$(object)
-	$(CXX) $(object) $(option)
+	$(CC) $(object) $(option)
 	./exe
 2:
 	gcc -O2 main.c -o exe
@@ -20,7 +19,4 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
-#ffmpeg -i %4d.png -vb 250k -maxrate 300k -minrate 200k -bf 5 -b_strategy 0 lorentz.mp4
-#ffmpeg -i %4d.png -vb 250k -pass 2 -passlogfile ffmpeg2pass lorentz.mp4
-f:
-	ffmpeg -i %4d.png -vb 400k lorentz.mp4
+
