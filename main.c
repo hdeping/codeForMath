@@ -44,8 +44,8 @@ void getMatMul(int *out,int *arr1,int *arr2,int size)
     
 }
 /*}}}*/
-/*void getResidueMat{{{*/
-void getResidueMat(int *arr,int value,int finalNum,int size)
+/*int  getResidueMat{{{*/
+int getResidueMat(int *arr,int value,int finalNum,int size)
 {
     int *arr1,*result;
     int *arr2;
@@ -102,26 +102,15 @@ void getResidueMat(int *arr,int value,int finalNum,int size)
     
     
     getMatMul(arr2,result,arr1,2);
-    int num1,num2,num;
-    for(int i = 0;i < 2;i++)
+    printf("a: (%d) + (%d)t \n",arr2[0],arr2[1]);
+    printf("a: (%d) + (%d)t \n",arr2[2],arr2[3]);
+    int num = arr2[0] % arr2[1];
+    if ( num < 0 )
     {
-        if ( arr2[2*i+1] < 0 )
-        {
-
-            num  = arr2[2*i]/abs(arr2[2*i+1]);
-            num1 = arr2[2*i]%abs(arr2[2*i+1]);
-            num2 = arr2[2 - 2*i] + arr2[3 - 2*i]*num;
-
-        }
-        
+        num += arr2[1]; 
     }
     
-    printf("%d,%d,%d\n",num,num1,num2);
-    
-    
-    printf("a: (%d) + (%d)t \n",num1,arr2[1]);
-    printf("a: (%d) + (%d)t \n",num2,arr2[3]);
-    
+    printf("a: %d\n",num);
 
 
 
@@ -129,6 +118,7 @@ void getResidueMat(int *arr,int value,int finalNum,int size)
     free(arr1);
     free(arr2);
     free(result);
+    return num;
 }
 /*}}}*/
 /*void runResidue{{{*/
@@ -156,6 +146,34 @@ void runResidue(int num1,int num2,int value)
 
 }
 /*}}}*/
+/*int getResNum{{{*/
+int getResNum(int *arrN,int *arrM,int size)
+{
+    int *arrData,*res;
+
+    arrData = (int *)malloc(sizeof(int)*size);
+    res = (int *)malloc(sizeof(int)*size);
+    int totalMul = 1;
+    for(int i = 0;i < size;i++)
+    {
+        totalMul *= arrN[i];  
+    }
+    for(int i = 0;i < size;i++)
+    {
+        arrData[i] = totalMul/arrN[i];
+    }
+    for(int i = 0;i < size;i++)
+    {
+        res[i] = runResidue(arrData[i],arrN[i],size);
+    }
+    
+
+    
+    free(arrData);
+    free(res);
+    
+}
+/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
@@ -166,12 +184,14 @@ int main( int argc,char *argv[])
 
     // There is no need that n > m
     // n > m or m > n, anyway!
-    
-    int n     = 79;
-    int m     = 117;
-    int value = 20000;
 
-    runResidue(n,m,value);
+    int arrN[3] = {3,5,7}; 
+    int arrM[3] = {1,2,3}; 
+    
+
+    // runResidue(n,m,value);
+    int num = getResNum(arrN,arrM,3);
+    printf("num is %d\n",num);
     
 
 }
