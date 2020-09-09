@@ -1,70 +1,43 @@
 #include "head.h"
 
-/*void getChar58{{{*/
-void getChar58(char *ch)
+/*int getNum{{{*/
+int getNum(int n)
 {
-    int num = 0;
-    // number 0~9
-    for(int i = 0;i < 10;i++)
-    {
-        ch[num] = '0'+i;
-        num++;
-    }
-    // lower character
-    char tmp;
-    for(int i = 0;i < 26;i++)
-    {
-        
-        tmp = 'a'+i;
-        if ( tmp !=  'l' && tmp != 'o'    )
-        {
-            ch[num] = tmp;
-            num++;
-        }
-        
-    }
-    // upper character
-    for(int i = 0;i < 26;i++)
-    {
-        
-        tmp = 'A'+i;
-        if ( tmp !=  'I' && tmp != 'O'    )
-        {
-            ch[num] = tmp;
-            num++;
-        }
-        
-    }
-    
-    
+    int res;
+    res = n/2+ n/3+ n/5- n/6 -
+          n/10- n/15+ n/30;
+    return res;
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    srand(time(NULL)); 
-    unsigned long privateKey[4];
-    unsigned long randNum ;
+    int n = 2090;
+    int res = getNum(n);
+    printf("res = %d\n",res);
 
-    char ch[58];
-    // get char
-    getChar58(ch);
-    for(int i = 0;i < 58;i++)
+    int count = 0 ;
+    for(int i = 1;i < n;i++)
     {
-        printf("%c",ch[i]);
+        if ( i%2 == 0  )
+        {
+            count++;
+            printf("%d,%d\n",count,i);
+        }
+        else if ( i%3 == 0  )
+        {
+            count++;
+            printf("%d,%d\n",count ,i);
+        }
+        else if ( i%5 == 0  )
+        {
+            count++;
+            printf("%d,%d\n",count,i);
+        }
         
     }
-    printf("\n");
     
-
-
-    for(int i = 0;i < 4;i++)
-    {
-        randNum = rand();
-        privateKey[i] = randNum*randNum;
-        printf("%ld\n",privateKey[i]);
-    }
-
+    
 }
 /*}}}*/
 
