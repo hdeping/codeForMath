@@ -1,49 +1,46 @@
 #include "head.h"
-double x[n],y[n];
+
 /*int main{{{*/
 int main( int argc,char *argv[]){
-    igraph_integer_t diameter;
-    igraph_t graph1;
-    igraph_rng_seed(igraph_rng_default(),30);
-    igraph_erdos_renyi_game(&graph1,IGRAPH_ERDOS_RENYI_GNP,1000,0.01,
-            IGRAPH_UNIMPLEMENTED,IGRAPH_NO_LOOPS);
-    igraph_diameter(&graph1,&diameter,0,0,0,IGRAPH_UNDIRECTED,1);
-    printf("Diameter of a random graph with average degree 10: %d\n",
-            (int) diameter);
-    return 0;
-    /*
-     * 
-    double a = 4.01,b = 5.031;
-    given_data(a,b);
-    linear_regression(x,y,n);
-     * */
-}
-/*}}}*/
-/*void linear_regression{{{*/
-void linear_regression(double *x,double *y,int len)
-{
-    double c0,c1,cov00,cov01,cov11,chisq;
-    gsl_fit_linear(x,1,y,1,len,&c0,&c1,&cov00,&cov01,&cov11,&chisq);
-    printf("Y = %g + %g * X\n",c0,c1);
-    printf("  Slope  : %g\n",c1);
-    printf("Intercept: %g\n",c0);
-    // printf("cov00,cov01  %g,%g\ncov01,cov11  %g,%g\n",cov00,cov01,cov01,cov11);
-    printf("chisq ==> %g\n",chisq);
-}
-/*}}}*/
-/*void given_data{{{*/
-void given_data(double a,double b)
-{
-    double delta = 1E-2;
-    double x1;
-    srand(time(NULL)); 
+    igraph_t g1,g2,res;
+    igraph_vector_t v;
+    igraph_vector_t map1,map2;
 
-    for(long i = 0;i < n;i++)
+    igraph_vector_init(&map1,0);
+    igraph_vector_init(&map2,0);
+    // composition with the empty graph
+
+    igraph_empty(&g1,5,IGRAPH_UNDIRECTED);
+    igraph_full(&g2,5,IGRAPH_UNDIRECTED,IGRAPH_NO_LOOPS);
+    igraph_compose(&res,&g1,&g2,&map1,&map2);
+    if ( igraph_ecount(&res) != 0  )
     {
-        x1 = rand() / total;
-        x[i] = (i + 1)*delta;
-        y[i] = a*x[i] + b;
+        printf("igraph_ecount  != 0 \n");
+        return 1;
     }
-    
+    if ( igraph_vector_size(&map1) && igraph_vector_size(&map2))
+    {
+        printf("size of map1 and map2  != 0 \n");
+        
+        return 11;
+    }
+    igraph_destroy(&res);
+    igraph_compose(&res,&g2,&g1,&map1,&map2);
+    printf("new res\n");
+    if ( igraph_ecount(&res) != 0  )
+    {
+        printf("igraph_ecount  != 0 \n");
+        return 2;
+    }
+    if ( igraph_vector_size(&map1) && igraph_vector_size(&map2))
+    {
+        printf("size of map1 and map2  != 0 \n");
+        return 12;
+    }
+    igraph_destroy(&res);
+    igraph_destroy(&g1);
+    igraph_destroy(&g2);
+
+
 }
 /*}}}*/
