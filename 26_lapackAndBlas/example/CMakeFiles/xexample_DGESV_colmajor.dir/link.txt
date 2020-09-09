@@ -1,1 +1,0 @@
-/sbin/cc     CMakeFiles/xexample_DGESV_colmajor.dir/example_DGESV_colmajor.o CMakeFiles/xexample_DGESV_colmajor.dir/lapacke_example_aux.o  -o xexample_DGESV_colmajor -rdynamic -llapacke 

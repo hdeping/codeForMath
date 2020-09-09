@@ -1,6 +1,0 @@
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/edit_cache.dir
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/xexample_DGESV_rowmajor.dir
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/rebuild_cache.dir
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/xexample_DGESV_colmajor.dir
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/xexample_DGELS_rowmajor.dir
-/home/hdeping/c/math/26_lapackAndBlas/example/CMakeFiles/xexample_DGELS_colmajor.dir
