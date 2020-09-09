@@ -1,5 +1,5 @@
-CC = gcc -g -pg
-option = -o exe
+CC = gcc -g
+option = -o exe -lcblas
 object = main.o
 source = main.c
 run:$(object)

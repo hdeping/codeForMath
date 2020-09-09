@@ -1,69 +1,59 @@
 #include "head.h"
 
-#define swap(x,y)  tmp=(x);(x)=(y);(y)=tmp
-
-int countNumber = 0;  
-int tmp;
-const int number = 10;
-FILE *fp;
-
-/*void print_list{{{*/
-void print_list(int *list ,int len)
+/*void printVector{{{*/
+void printVector(double *num,int len)
 {
     for(int i = 0;i < len;i++)
     {
-        fprintf(fp,"%3d ",list[i]);
+        printf("%lf ",num[i]);
         
     }
-    fprintf(fp,"\n");
-}
-/*}}}*/
-/*void generate{{{*/
-void generate(int *list ,int n)
-{
-    if ( n == 1  )
-    {
-        print_list(list,number);
-    }
-    else
-    {
-        int i = 0;
-        while ( 1 )
-        {
-            generate(list,n-1);
-            if ( i == (n-1)  )
-            {
-                break ;
-            }
-            if ( n%2 == 0  )
-            {
-                swap(list[i],list[n-1]);
-            }
-            else
-            {
-                swap(list[0],list[n-1]);
-            }
-            i++;
-        }
-        
-    }
+    printf("\n");
 }
 /*}}}*/
 /*int main{{{*/
-int main( int argc,char *argv[])
-{
-    fp= fopen("data.txt","w");
-    assert(fp != NULL);
-    int len = 10;
-    int *list;
-    list = (int *)malloc(sizeof(int)*len);
-    for(int i = 0;i < len;i++)
-    {
-        list[i] = i+1;
-    }
-    generate(list,len);
-    free(list);
-    fclose(fp);
-    return 0;
-}
+int main(int argc, char **argv) {
+  double x[4] = {2, 3, 4, 5};
+  double y[4] = {5, 4, 9, 2};
+  double d[4];
+
+  printVector(x,4);
+  printVector(y,4);
+   
+           /* lenX X  incX Y  incY*/
+  cblas_dswap(4,   x, 1,   y, 1);
+
+  printf("After Swap..\n");
+  printVector(x,4);
+  printVector(y,4);
+
+           /* lenX X  incX Y  incY*/
+  cblas_dcopy(4,   x, 1,   d, 1);
+  printf("After Copy (d=x)..\n");
+  printVector(x,4);
+
+
+           /* lenX alpha X  incX */
+  cblas_dscal(4,   2.0,  y, 1);
+  printf("After Scale (2*y)..\n");
+  printVector(y,4);
+
+           /* lenX alpha X  incX y  incY*/
+  cblas_daxpy(4,   3.0,  x, 1,   y, 1);
+  printf("After Add (y=3*x+y)..\n");
+  printVector(y,4);
+  
+                                                     /* lenX X  incX */
+  printf("2-norm   of y = %0.2f\n",  (float)cblas_dnrm2(4,   y, 1));
+  printf("sum-norm of y = %0.2f\n",  (float)cblas_dasum(4,   y, 1));
+
+  /* Note, the i#amax norm returns the INDEX of the element that corresponds to the max-norm value. */
+                                                     /* lenX X  incX */
+  printf("max-norm of y = |y[%d]|\n", (int)cblas_idamax(4,   y, 1));   
+
+                                                     /* lenX X  incX Y  incY */
+  printf("      y dot y = %0.2f\n",   (float)cblas_ddot(4,   y, 1,   y, 1));
+
+  return 0;
+} /* end func main */
 /*}}}*/
