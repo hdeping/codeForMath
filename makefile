@@ -1,5 +1,5 @@
 CC = gcc -g
-option = -o exe
+option = -o exe -llapack -llapacke
 object = main.o
 source = main.c
 run:$(object)
@@ -19,4 +19,3 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
-
