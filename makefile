@@ -20,6 +20,3 @@ p:
 clean:
 	rm exe $(object)
 
-e:
-	gcc new.c
-	./a.out

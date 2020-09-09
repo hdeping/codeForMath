@@ -1,150 +1,103 @@
 #include "head.h"
-#define n 19 
+/**
+ * equation:
+ * y'*s(z) - z'*s(y) = 0
+ * */
 
-/*void print_mat{{{*/
-void print_mat(int (*mat)[n], int size)
-{
-    for(int i = 0;i < size;i++)
-    {
-        for(int j = 0;j < n;j++)
-        {
-            printf("%d ",mat[i][j] );
-            
+double delta = 0.01;
 
-        }
-        printf("\n");
-        
-    }
-    
-}
-/*}}}*/
-/*void get_mat{{{*/
-void get_mat(int (*adj)[n],int *class)
-{
-    int num1[5],num2[3];
-    // get data from the file
-    FILE *fp;
-    fp= fopen("data.txt","r");
-    assert(fp != NULL);
-    // part 1: 6*5
-    int m1,m2;
-    m1 = 6;
-    m2 = 5;
-    for(int i = 0;i < m1;i++)
-    {
-        int num = 1 << i;
-        for(int j = 0;j < m2;j++)
-        {
-            fscanf(fp,"%d",num1+j);
-            // printf("%3d ",num1[j]);
-            class[num1[j]] += num; 
-            
-        }
-        // printf("\n");
-        
-        for(int j = 0;j < m2 - 1;j++)
-        {
-            for(int k = j + 1;k < m2;k++)
-            {
-                int tmp1 = num1[j];
-                int tmp2 = num1[k];
-                adj[tmp1][tmp2] = 1;
-                adj[tmp2][tmp1] = 1;
-            }
-            
-        }
-    }
-    // part 2: 9*3
-    
-    m1 = 9;
-    m2 = 3;
-    
-    for(int i = 0;i < m1;i++)
-    {
-        int num = 1 << (6+i);
-        for(int j = 0;j < m2;j++)
-        {
-            fscanf(fp,"%d",num2+j);
-            // printf("%3d ",num2[j]);
-            class[num2[j]] += num; 
-        }
-        // printf("\n");
-        for(int j = 0;j < m2 - 1;j++)
-        {
-            for(int k = j + 1;k < m2;k++)
-            {
-                int tmp1 = num2[j];
-                int tmp2 = num2[k];
-                adj[tmp1][tmp2] = 1;
-                adj[tmp2][tmp1] = 1;
-            }
-            
-            
-        }
-    }
-
-    fclose(fp);
-}
-/*}}}*/
-/*void getBit{{{*/
-void getBit(int *class)
+/*void init_data{{{*/
+void init_data(double *x,double *y,double *z,
+               double *diff_y,double *diff_z,int n)
 {
     for(int i = 0;i < n;i++)
     {
-        printf("class[%2d] = %7d ",i,class[i]);
-        
-        int num = class[i];
-        while ( num > 0)
+        x[i] = i*delta;
+        y[i] = x[i];
+        z[i] = x[i]*x[i] + y[i]*y[i];
+        if ( i != n - 1 )
         {
-            printf("%d",num & 1);
-            num = num >> 1;
+            diff_y[i] = (y[i+1] - y[i])/delta;
         }
-        printf("\n");
-        
-        
+        else
+        {
+            diff_y[i] = (1.0 - y[i])/delta;
+        }
+        diff_z[i] = 2.0*(x[i] + y[i]*diff_y[i]);
+    }
+
+}
+/*}}}*/
+/*void iterProc{{{*/
+void iterProc(double *x,double *y,double *z,
+               double *diff_y,double *diff_z,int n)
+{
+    double sum_y = 0.0;
+    double sum_z = 0.0;
+    for(int i = 0;i < n;i++)
+    {
+        sum_y += y[i]; 
+        sum_z += z[i]; 
     }
     
+    // refresh diff_y
+    for(int i = 0;i < n-1;i++)
+    {
+        diff_y[i] = 2.0*x[i]*y[i]*sum_y/(sum_z - 2.0*y[i]*sum_y);
+    }
+    // refresh y,z
+    y[0] = 0.0;
+    for(int i = 1;i < n;i++)
+    {
+        y[i] = y[i - 1] + delta*diff_y[i];
+        z[i] = x[i]*x[i] + y[i]*y[i];
+    }
+
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
 
-    int class[n] = {0};
-    int adj[n][n] = {0} ;
-    get_mat(adj,class);
-    getBit(class);
-    // print_mat(adj,n);
-    int count = 0;
-    int line = 0;
-    for(int i = 0;i < n - 2;i++)
+    int n = 100;
+
+    double *x,*y,*z,*diff_y,*diff_z;
+    x       = (double *)malloc(sizeof(double)*n); 
+    y       = (double *)malloc(sizeof(double)*n); 
+    z       = (double *)malloc(sizeof(double)*n); 
+    diff_y  = (double *)malloc(sizeof(double)*n); 
+    diff_z  = (double *)malloc(sizeof(double)*n); 
+
+    init_data(x,y,z,diff_y,diff_z,n);
+
+    int iteration = 10000;
+    for(int i = 0;i < iteration;i++)
     {
-        for(int j = i + 1;j < n - 1;j++)
-        {
-            for(int k = j + 1;k < n;k++)
-            {
-
-                if (  adj[i][j]  == 1 && adj[i][k]  == 1 && adj[j][k]  == 1 )
-                {
-                    count++;
-                    int num = class[i]&class[j]&class[k];
-                    if ( num )
-                    {
-                        line++;
-                    }
-                    
-                    printf("%3d %3d %3d %6d\n",i,j,k,num);
-                }
-                
-            }
-
-        }
+        iterProc(x,y,z,diff_y,diff_z,n);
     }
-    printf("count = %d\n",count);
-    printf("line = %d\n",line);
+
+    FILE *fp;
+    fp= fopen("data.txt","w");
+    assert(fp != NULL);
+    for(int i = 0;i < n;i++)
+    {
+        fprintf(fp,"%lf,%lf,%lf\n",x[i],y[i],z[i]);
+        
+    }
     
+    fclose(fp);
 
     
+
+
+
+
+
+    free(x);
+    free(y);
+    free(z);
+    free(diff_y);
+    free(diff_z);
 
 }
 /*}}}*/
