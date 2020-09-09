@@ -18,5 +18,3 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
-new:
-	./exe
