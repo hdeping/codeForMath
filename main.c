@@ -1,52 +1,51 @@
 #include "head.h"
-/*void run{{{*/
-void run()
+/*void get_time{{{*/
+void get_time(new_time start,new_time end)
 {
-    double time[m];
-    int *p;
-    int recordOrder = 0;
-    double countTime = 0.0;
-    for(int i = 0;i < m;i++)
-    {
-        /*
-         * 
-        printf("-------i = %d -------\n",i);
-        printf("nn = %d\n",nn);
-         * */
-        p = num[i];
-        sortTest(p);
-        new_time start,end;
-        gettimeofday(&start,NULL );
-        heapSort(p);
-        gettimeofday(&end,NULL );
-        countTime += get_time(start,end);
-        recordOrder +=  sortTest(p);
-        printf("recordOrder = %d\n",recordOrder);
-    }
-    countTime /= m; 
-    // analyze_time(time);
-    // print_time(time);
-    printf("%4d %10.5lf times: %4d\n",nn/100000,
-              countTime,recordOrder);
+    double time;
+    time = end.tv_sec-start.tv_sec;
+    time += 1E-6*(end.tv_usec-start.tv_usec);
+    printf("time = %lf\n",time);
 }
 /*}}}*/
-/*void test{{{*/
-void test()
+/*double powi{{{*/
+double powi(double x,int n)
 {
-    int recordOrder = 0;
-    int *p = num[0];
-    sortTest(p);
-    heapSort(p);
-    print_num(p,nn);
-    recordOrder +=  sortTest(p);
+    double res = 1.0;
+    for(int i = 0;i < n;i++)
+    {
+        res *= x; 
+    }
+    return res;
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
-    srand(1991); 
-    getdat(nn);
-    readdat(nn);
-    run();
-    // test();
+    double a = 3.0;
+    const int n = (int)1.0E7;
+    new_time start,end;
+    double b;
+    gettimeofday(&start,NULL );
+    for(int i = 0;i < n;i++)
+    {
+        if ( n%2 == 0  )
+        {
+            a++;
+        }
+        else
+        {
+            a--;
+        }
+        b=a*a*a*a*a*a*a*a*a*a*a*a;
+        /*
+         * 
+         * */
+        
+    }
+    gettimeofday(&end,NULL );
+    printf("b = %lf\n",b);
+    get_time(start,end);
+    b = pow(a,12);
+    printf("b = %lf\n",b);
 }
 /*}}}*/
