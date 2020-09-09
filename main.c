@@ -1,34 +1,62 @@
 #include "head.h"
 
+int week(int x,int y,int z);
 /*int main{{{*/
 int main( int argc,char *argv[]){
-   int i1,i2,i3,i4;
-   int i,j;
-   int a[n][n],b[m][n];
-   i = 0;
-   for(i1 = 0;i1 < n;i1++){
-       for(i2 = 0;i2 < n;i2++){
-           if ( i1 == i2 ){
-               continue ;
-           }
-           
-           for(i3 = 0;i3 < n;i3++){
-               if ( i3 == i2 || i3 == i1 ){
-                   continue ;
-               }
-               
-               for(i4 = 0;i4 < n;i4++){
-                   if ( i4 == i3 || i4 == i2 || i4 == i1 ){
-                       continue ;
-                   }
-                   i++;
-                   a[i][0] = i1;
-                   a[i][1] = i2;
-                   a[i][2] = i3;
-                   a[i][3] = i4;
-               }
-           }
-       }
+    int a1[12] = {0,1,0,1,1,2,2,3,4,4,5,5};
+    int a2[12] ;
+    int i,j,k;
+
+    for(i = 0;i < 12;i++){
+        if ( i >= 2  ){
+            a2[i] = a1[i] - 1;
+        }
+        else{
+            a2[i] = 0;
+        }
+        
+    }
+    for(i = 0;i < 12;i++){
+        printf("a1 = %d,a2 = %d\n",a1[i],a2[i]);
+        
+    }
+}
+/*}}}*/
+/*int week{{{*/
+int week (int x,int y,int z){
+   int num;
+   int ii;
+   int days;
+
+   days = 0;
+   if ( x < 0 ){
+       printf("Sorry, year is wrong\n");
+       
    }
+   
+   switch(num){
+       case 1:
+           printf("today is Monday\n");
+           break;
+       case 2:
+           printf("today is Tuesday\n");
+           break;
+       case 3:
+           printf("today is Wednseday\n");
+           break;
+       case 4:
+           printf("today is Thursday\n");
+           break;
+       case 5:
+           printf("today is Friday\n");
+           break;
+       case 6:
+           printf("today is Saturday\n");
+           break;
+       default:
+           printf("today is Sunday\n");
+           break;
+   }
+   return num;
 }
 /*}}}*/
