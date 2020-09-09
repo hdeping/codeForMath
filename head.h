@@ -3,6 +3,8 @@
 #include <math.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <assert.h>
+
 
 struct Date
 {

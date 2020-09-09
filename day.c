@@ -54,11 +54,13 @@ int judge_date(date *date1)
         //printf("month = %d error!\n",month);
         return 0;
     }
+
     if ( day < 0 || day > get_month_day(year,month)  )
     {
         //printf("day = %d error!\n",day);
         return 0;
     }
+
     return 1;
     
 }
@@ -136,41 +138,16 @@ void print_date(date *date1)
     
 }
 /*}}}*/
-/*date *date_value{{{*/
-date *date_value(int year,int month,int day)
+/*void date_value{{{*/
+void date_value(date *date1,int year,int month,int day)
 {
-    date *date1;
-    date1 = (date *)malloc(sizeof (date));
     date1 -> year  = year; 
     date1 -> month = month; 
     date1 -> day   = day; 
-    return date1;
 }
 /*}}}*/
-/*int get_separat_days{{{*/
-int get_separat_days()
-{
-    date *date1,*date2;
-    FILE *fp;
-    date1 = (date *)malloc(sizeof (date));
-    date2 = (date *)malloc(sizeof (date));
-    fp= fopen("data.txt","r");
-    fscanf(fp,"%d%d%d",&(date1 ->  year),&(date1 ->  month),&(date1 ->  day));
-    fscanf(fp,"%d%d%d",&(date1 ->  year),&(date1 ->  month),&(date1 ->  day));
-    fclose(fp);
-    int days1,days2,days;
-    days1 = get_days(date2);
-    days2 = get_days(date2);
-    days = days1 - days2;
-    if ( days < 0 )
-    {
-        days = - days;
-    }
-    return days;
-}
-/*}}}*/
-/*date *adjust_date{{{*/
-date *adjust_date(date *date1)
+/*void adjust_date{{{*/
+void adjust_date(date *date1)
 {
     int x,y,z;
     x = date1 -> year; 
@@ -207,18 +184,16 @@ date *adjust_date(date *date1)
     date1 -> year  = x; 
     date1 -> month = y; 
     date1 -> day   = z; 
-    return date1;
 }
 /*}}}*/
 /*date *get_date{{{*/
-date *get_date(int days)
+void get_date(date *date1,int days)
 {
     if ( days < 1 )
     {
         printf("days error!\n");
-        return NULL ;
+        return ;
     }
-    date *date1;
     int x,y,z,tmp;
     x   = days/366 + 1;
     tmp = days%366; 
@@ -229,15 +204,14 @@ date *get_date(int days)
         z = 28;
     }
     int num;
-    date1 = date_value(x,y,z);
+    date_value(date1,x,y,z);
     num = days - get_days(date1) ;
-    date1 -> day += num;   
+    date1 ->  day += num;   
     while ( judge_date(date1) == 0  )
     {
-        date1 = adjust_date(date1);
+        adjust_date(date1);
     }
     // print_date(date1);
-    return date1;
     
 }
 /*}}}*/
@@ -249,7 +223,7 @@ void infer_date(date *date1,int num)
     printf("----------Now--------------\n");
     print_date(date1);
     days = get_days(date1) - num;
-    date1 = get_date(days);
+    get_date(date1,days);
     printf("----------Before-----------\n");
     print_date(date1);
 }
