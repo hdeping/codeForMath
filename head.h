@@ -1,20 +1,27 @@
+
 /* -*- Mode:C; Coding:us-ascii-unix; fill-column:132 -*- */
 /* ****************************************************************************************************************************** */
 /**
-   @file      blas3C.c
+   @file      slvSysC.c
    @author    Mitch Richling <https://www.mitchr.me/>
-   @Copyright Copyright 1997 by Mitch Richling.  All rights reserved.
-   @brief     Demonstrate several cblas (level 1) functions. @EOL
-   @Keywords  blas cblas C fortran numerical linear algebra vector matrix gemv ger
-   @Std       C89
-
-   This is a simple program intended to illistrate how to make use of #gemv and #ger blas routines (as implimented in the cblas).
-
+   @Copyright Copyright 1998 by Mitch Richling.  All rights reserved.
+   @brief     Demonstrate LAPACK's sgesv functions.@EOL
+   @Keywords  claback cblas sgesv numerical linear algebra
+   @Std       C99
+              
 */
 
 /* ------------------------------------------------------------------------------------------------------------------------------ */
 
-#include <stdio.h>              /* I/O lib         ISOC     */
-#include <stdlib.h>             /* Standard Lib    ISOC     */
-#include <cblas.h>              /* Basic Linear Algebra I/O */
-
+#include <stdio.h>              /* I/O lib         ISOC  */
+#include <stdlib.h>             /* Standard Lib    ISOC  */
+#ifdef __APPLE__
+#include <Accelerate/Accelerate.h>    /* The MacOS X blas/lapack stuff */
+typedef __CLPK_integer       CLPKinteger;
+typedef __CLPK_doublereal    CLPKdoublereal;
+#else
+#include <lapacke.h>    	/* C LAPACK         */
+typedef int       CLPKinteger;
+typedef double    CLPKdoublereal;
+#endif
+#include <cblas.h>           /* Basic Linear Algebra I/O */

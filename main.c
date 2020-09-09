@@ -24,43 +24,59 @@ void printMatrix(double *num,int row,int column)
 /*}}}*/
 /*int main{{{*/
 int main(int argc, char **argv) {
-  double a[4*5] = {  1, 2, 3, 4, 5,  /* CblasRowMajor */
-                     6, 7, 8, 9,10,
-                    11,12,13,14,15,
-                    16,17,18,19,20
-                  };
-  double b[5*4] = {  1, 0, 0, 0,   /* CblasRowMajor */
-                     0, 0, 1, 0,
-                     0, 1, 0, 0,
-                     0, 0, 0, 1,
-                     0, 0, 0, 0
-                  };
-  double c[4*4];
+  CLPKdoublereal a[4*4] = { 1, 2, 3, 4,
+                               6, 7, 9, 9,
+                               11,12,19,14,
+                               16,17,18,12,
+                             };
+  CLPKdoublereal b[4] = {1, 3, 5, 6};
+  CLPKinteger pivs[4], inf;
+  CLPKinteger n=4, lda=4, nrhs=1, ldb=4;
+  char tbuf[1024];
+  int i;
 
-  double d[4*4] = {  1, 2, 3, 4,  /* CblasRowMajor */
-                     6, 7, 8, 9,
-                    11,12,13,14,
-                    16,17,18,19
-                  };
-  double e[4*4] = {  1, 0, 0, 0,  /* CblasRowMajor */
-                     0, 0, 1, 0,
-                     0, 1, 0, 0,
-                     0, 0, 0, 1
-                  };
+  sprintf(tbuf, " a[%dx%d]= ", 4, 4);
+  printMatrix(a, 4, 4);
 
-   printMatrix(a, 4, 5);
-   printMatrix(b, 5, 4);
-            /* row_order      transform     transform     rowsA colsB K  alpha  a  lda  b  ldb beta c   ldc */
-   cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4,    4,    5, 1.0,   a,   5, b, 4,  0.0, c,  4);
-   printMatrix(c, 4, 4);
+  sprintf(tbuf, " b[%dx%d]= ", 1, 4);
+  printMatrix(b, 1, 4);
+
+  //sgesv_(&n, &nrhs, a, &lda, pivs, b, &ldb, &inf);
+  dgesv_(&n, &nrhs, a, &lda, pivs, b, &ldb, &inf);
+
+  if(inf == 0) {
+    printf("Successful Solution\n");
+  } else if(inf < 0) {
+    printf("Illegal value at: %d\n", -(int)inf);
+    exit(1);
+  } else if(inf > 0) {
+    printf("Matrix was singular\n");
+    exit(1);
+  } else {
+    printf("Unknown Result (Can't happen!)\n");
+    exit(1);
+  } /* end if/else */
+
+  sprintf(tbuf, "a'[%dx%d]= ", 4, 4);
+  printMatrix(a, 4, 4);
+
+  sprintf(tbuf, "b'[%dx%d]= ", 1, 4);
+  printMatrix(b, 1, 4);
+
+  printf("PIV=");
+  for(i=0;i<4;i++)
+    printf("%4d ", (int)(pivs[i]));
+  printf("\n");
 
 
-   printMatrix(d, 4, 4);
-   printMatrix(e, 4, 4);
-            /* row_order      transform     transform     rowsA colsB K  alpha  a  lda  b  ldb beta c   ldc */
-   cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4,    4,    4, 1.0,   d,   4, e, 4,  0.0, c,  4);
-   printMatrix(c, 4, 4);
+// *  IPIV    (output) INTEGER array, dimension (N)
+// *          The pivot indices that define the permutation matrix P;
+// *          row i of the matrix was interchanged with row IPIV(i).
+// *
 
-   return 0;
+
+
+  return 0;
+
 } /* end func main */
 /*}}}*/

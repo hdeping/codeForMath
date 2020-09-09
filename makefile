@@ -1,5 +1,5 @@
 CC = gcc -g
-option = -o exe -lcblas
+option = -o exe -llapack
 object = main.o
 source = main.c
 run:$(object)
