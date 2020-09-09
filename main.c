@@ -1,85 +1,47 @@
 #include "head.h"
+#define n 100
+#define m 10
 
-#define n 10
-/*int process{{{*/
-long process(int *arr,int length,int aim)
-{
-    assert(arr != NULL  );
-    assert(length > 0);
-    assert(aim >= 0);
-    long *tmp[n];
-    for(int i = 0;i < n;i++)
-    {
-        tmp[i] = (long *)malloc(sizeof(long)*(aim+1));
-    }
-    
-    // the first column
-    for(int i = 0;i < n;i++)
-    {
-        tmp[i][0] = 1;
-    }
-    // the first row
-    for(int i = 1;i*arr[0] <= aim ;i++)
-    {
-        tmp[0][i*arr[0]] = 1;
-    }
-    for(int i = 1;i < n;i++)
-    {
-        for(int j = 1;j < aim + 1;j++)
-        {
-            long num = 0;
-            for(int k = 0;k*arr[i] <= j;k++)
-            {
-                num += tmp[i-1][j - k*arr[i]]; 
-            }
-            tmp[i][j] = num;
-        }
-        
-    }
-    // print the matrix
-    for(int i = 0;i < n;i++)
-    {
-        for(int j = 0;j < aim+1;j++)
-        {
-            printf("%4d ",tmp[i][j]);
-            
-        }
-        printf("\n");
-        
-    }
-    
-    long num = tmp[n-1][aim];
-    // free the array
-    for(int i = 0;i < n;i++)
-    {
-        free(tmp[i]);
-    }
-    
-    return num;
-    
-}
-/*}}}*/
 /*int main{{{*/
-int main( int argc,char *argv[]){
+int main( int argc,char *argv[])
+{
+    srand(time(NULL)); 
+    int arr[n];
 
-    if ( argc == 1  )
-    {
-        printf("Please input a file\n");
-        printf("For Example: '<command> <data.file>'\n");
-        return 0;
-    }
-    long num;
-    int aim = atoi(argv[1]);
-    int *arr;
-    arr = (int *)malloc(sizeof(int)*n);
     for(int i = 0;i < n;i++)
     {
-        arr[i] = 2*i + 2;
+        arr[i] = i;
+    }
+
+    int tmp;
+    for(int i = 0;i < n;i++)
+    {
+        tmp  = rand() % n;
+        int swap;
+        swap = arr[tmp];
+        arr[tmp] = arr[i];
+        arr[i]   = swap;
     }
     
-    num = process(arr,n,aim);
-    printf("num = %ld\n",num);
-    free(arr);
-
+    for(int i = 0;i < n;i++)
+    {
+        printf("%d ",arr[i]);
+    }
+    int status[n];
+    
+    int limit = n / m;
+    for(int i = 0;i < m;i++)
+    {
+        for(int j = 0;j < limit;j++)
+        {
+            int num = i*m + j;
+            status[arr[num]] = i;
+        }
+    }
+    for(int i = 0;i < n;i++)
+    {
+        printf("%d ",status[i]);
+    }
 }
 /*}}}*/
+
