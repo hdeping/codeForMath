@@ -4,51 +4,57 @@
 
 int countNumber = 0;  
 int tmp;
+const int number = 10;
 FILE *fp;
 
-/*void generate{{{*/
-void generate(int *list ,int len)
+/*void print_list{{{*/
+void print_list(int *list ,int len)
 {
-    int *arr = (int *)malloc(sizeof(int)*len);
     for(int i = 0;i < len;i++)
     {
-        arr[i] = 0;
+        fprintf(fp,"%3d ",list[i]);
+        
     }
-    fwrite(list,sizeof(int)*len,1,fp);
-    int i = 1;
-    while ( i < len )
+    fprintf(fp,"\n");
+}
+/*}}}*/
+/*void generate{{{*/
+void generate(int *list ,int n)
+{
+    if ( n == 1  )
     {
-        if ( arr[i] < i )
+        print_list(list,number);
+    }
+    else
+    {
+        int i = 0;
+        while ( 1 )
         {
-            if ( i%2 == 0  )
+            generate(list,n-1);
+            if ( i == (n-1)  )
             {
-                 swap(list[0],list[i]);
+                break ;
+            }
+            if ( n%2 == 0  )
+            {
+                swap(list[i],list[n-1]);
             }
             else
             {
-                swap(list[arr[i]],list[i]);
+                swap(list[0],list[n-1]);
             }
-            fwrite(list,sizeof(int)*len,1,fp);
-            arr[i]++;
-            i = 1;
-        }
-        else
-        {
-            arr[i] = 0;
             i++;
         }
+        
     }
-    free(arr);
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    int len = 10;
-    char filename[20];
-    sprintf(filename,"binary%d.dat",len);
-    fp= fopen(filename,"wb");
+    fp= fopen("data.txt","w");
     assert(fp != NULL);
+    int len = 10;
     int *list;
     list = (int *)malloc(sizeof(int)*len);
     for(int i = 0;i < len;i++)
