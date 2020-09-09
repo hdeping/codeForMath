@@ -18,11 +18,9 @@ int cmp_double(const void *a, const void *b)
     return *(double *)a>*(double *)b?1:-1;
 }
 /*}}}*/
-/*int main{{{*/
-int main( int argc,char *argv[])
+/*void testInt{{{*/
+void testInt()
 {
-    srand(time(NULL)); 
-
     int arr[n];
     for(int i = 0;i < n;i++)
     {
@@ -38,11 +36,23 @@ int main( int argc,char *argv[])
     {
         printf("%d\n",arr[i]);
     }
+    
+}
+/*}}}*/
+/*void testChar{{{*/
+void testChar()
+{
 
     char ch[40] = ",kieurdkfdkfjeiteijfdjfdgdababekkdfdktfe";
     printf("%s\n",ch);
     qsort(ch,40,sizeof (char),cmp_char);
     printf("%s\n",ch);
+    
+}
+/*}}}*/
+/*void testDouble{{{*/
+void testDouble()
+{
     
     double arrNew[n];
     
@@ -59,7 +69,17 @@ int main( int argc,char *argv[])
     {
         printf("%lf\n",arrNew[i]);
     }
-    
+
+}
+/*}}}*/
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+    srand(time(NULL)); 
+
+    testInt();
+    testChar();
+    testDouble();
 
 }
 /*}}}*/
