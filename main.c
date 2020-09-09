@@ -1,5 +1,5 @@
 #include "head.h"
-#define getsum(sum,arr,len) sum = 0;\
+#define getsum(sum,arr,len) sum = 0.0;\
 for(int i = 0;i < len;i++)\
 {\
     sum += arr[i]; \
@@ -48,30 +48,27 @@ void getDegreeDistri(igraph_t *graph)
     free(degDist);
 }
 /*}}}*/
-/*void level1{{{*/
-void level1()
+/*double getEntropy{{{*/
+double getEntropy(double *arr,int len)
 {
-    igraph_t graph;
-    int n = 1000;
-    int m = 10;
-    igraph_static_power_law_game(&graph,n,n*m,2.0,- 1,0,0,0);
-    getDegreeDistri(&graph);
-    igraph_destroy(&graph);
+    double entropy = 0.0;
+    
+    for(int i = 0;i < len;i++)
+    {
+        if ( arr[i] > 0.0 )
+        {
+            entropy += arr[i] * log(arr[i]); 
+        }
+    }
+    entropy = - entropy;
+    return entropy;
 }
 /*}}}*/
-/*void level2{{{*/
-void level2(int argc, char *argv[])
+/*void level3{{{*/
+void level3(int m)
 {
-    if ( argc == 1  )
-    {
-        printf("Please input a file\n");
-        printf("For Example: '<command> <data.file>'\n");
-        return ;
-    }
-    double power = atof(argv[1]);
     igraph_t graph;
     int n = 1000;
-    int m = 10;
     int cy_times = 1000;
 
     // initialize degDist
@@ -84,50 +81,52 @@ void level2(int argc, char *argv[])
 
     igraph_vector_t degree;
     igraph_vector_init(&degree,0);
-    for(int ii = 0;ii < cy_times;ii++)
+    // get a new graph
+    igraph_erdos_renyi_game_gnm(&graph,n,m,
+            IGRAPH_UNDIRECTED,IGRAPH_NO_LOOPS);
+    // get degree
+    igraph_degree(&graph,&degree,igraph_vss_all(),IGRAPH_ALL ,0);
+    // get distribution
+    for(int i = 0;i < n;i++)
     {
-        // get a new graph
-        igraph_static_power_law_game(&graph,n,n*m,power,- 1,0,0,0);
-        // get degree
-        igraph_degree(&graph,&degree,igraph_vss_all(),IGRAPH_ALL ,0);
-        // get distribution
-        for(int i = 0;i < n;i++)
-        {
-            int ii = VECTOR(degree)[i];
-            degDist[ii]++;
-        }
-        igraph_destroy(&graph);
+        int ii = VECTOR(degree)[i];
+        degDist[ii]++;
     }
+    igraph_destroy(&graph);
     
 
     igraph_vector_destroy(&degree);
 
     // print degree distribution
-    FILE *fp,*fp1;
-    fp  = fopen("degDist.txt","w");
-    fp1 = fopen("data.txt","w");
-    assert(fp != NULL);
+    
+    double *degDistNorm;
+    degDistNorm = (double *)malloc(sizeof(double)*n);
+    int len = 0;
+    double sum;
+    getsum(sum,degDist,n);
     for(int i = 0;i < n;i++)
     {
         if ( degDist[i] != 0   )
         {
-            fprintf(fp  ,"%d,%lf\n",i,(double)degDist[i]/cy_times);
-            fprintf(fp1 ,"%d %lf\n",i,(double)degDist[i]/cy_times);
+            degDistNorm[len] = (double)degDist[i] / sum;
+            len ++;
         }
     }
-    fclose(fp);
-    fclose(fp1);
+    double entropy;
+    entropy = getEntropy(degDistNorm,len);
+    printf("entropy is %lf\n",entropy);
+    
+    free(degDistNorm);
 
     
     free(degDist);
 }
 /*}}}*/
-/*void level3{{{*/
-void level3(double power)
+/*void levelSF{{{*/
+void levelSF(int m)
 {
     igraph_t graph;
     int n = 1000;
-    int m = 10;
     int cy_times = 1000;
 
     // initialize degDist
@@ -138,46 +137,47 @@ void level3(double power)
         degDist[i] = 0;
     }
 
+    igraph_t g1;
+    igraph_full(&g1,10,IGRAPH_UNDIRECTED ,IGRAPH_NO_LOOPS );
     igraph_vector_t degree;
     igraph_vector_init(&degree,0);
-    for(int ii = 0;ii < cy_times;ii++)
+    // get a new graph
+    igraph_barabasi_game(&graph,n,m,1,0,1E-3,0,0,
+            IGRAPH_BARABASI_PSUMTREE,&g1);
+    // get degree
+    igraph_destroy(&g1);
+    igraph_degree(&graph,&degree,igraph_vss_all(),IGRAPH_ALL ,0);
+    // get distribution
+    for(int i = 0;i < n;i++)
     {
-        // get a new graph
-        igraph_static_power_law_game(&graph,n,n*m,power,- 1,0,0,0);
-        // get degree
-        igraph_degree(&graph,&degree,igraph_vss_all(),IGRAPH_ALL ,0);
-        // get distribution
-        for(int i = 0;i < n;i++)
-        {
-            int ii = VECTOR(degree)[i];
-            degDist[ii]++;
-        }
-        igraph_destroy(&graph);
+        int ii = VECTOR(degree)[i];
+        degDist[ii]++;
     }
+    igraph_destroy(&graph);
     
 
     igraph_vector_destroy(&degree);
 
     // print degree distribution
-    FILE *fp,*fp1;
-    char filename1[20];
-    char filename2[20];
-    sprintf(filename1,"degDist%d.txt",(int)(10*power));
-    sprintf(filename2,"data%d.txt",(int)(10*power));
     
-    fp  = fopen(filename1,"w");
-    fp1 = fopen(filename2,"w");
-    assert(fp != NULL);
+    double *degDistNorm;
+    degDistNorm = (double *)malloc(sizeof(double)*n);
+    int len = 0;
+    double sum;
+    getsum(sum,degDist,n);
     for(int i = 0;i < n;i++)
     {
         if ( degDist[i] != 0   )
         {
-            fprintf(fp  ,"%d,%lf\n",i,(double)degDist[i]/cy_times);
-            fprintf(fp1 ,"%d %lf\n",i,(double)degDist[i]/cy_times);
+            degDistNorm[len] = (double)degDist[i] / sum;
+            len ++;
         }
     }
-    fclose(fp);
-    fclose(fp1);
+    double entropy;
+    entropy = getEntropy(degDistNorm,len);
+    printf("entropy is %lf\n",entropy);
+    
+    free(degDistNorm);
 
     
     free(degDist);
@@ -187,12 +187,12 @@ void level3(double power)
 int main( int argc,char *argv[])
 {
     int len = 11;
-    for(int i = 0;i < len;i++)
+
+    srand(time(NULL)); 
+    for(int i = 1;i < 10;i++)
     {
-        double power = 2.0 + 0.1*i;
-        printf("When power is %lf\n",power);
-        
-        level3(power);
+        level3(i);
+        levelSF(i);
     }
 }
 /*}}}*/
