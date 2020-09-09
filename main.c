@@ -31,26 +31,68 @@ int isBig(sequence res1,sequence res2)
     
 }
 /*}}}*/
+/*int part{{{*/
+
+/* 
+ * 分治算法: 
+ *    以division下标的元素值为分界点, 将数组分成左右两个部分. 
+ *    返回分界点的下标. 
+ * 过程: 
+ *    1. 保留分界点元素的值. 
+ *    2. 移动左指针, 直到一个值不小于分界值. 
+ *    3. 判断是否已经划分了所有元素, 如果是, 跳出. 
+ *    4. 将左指针目前的值复制到division位置, 重置division为left位置. 
+ *    5. 和2-4步骤一样, 处理右指针. 
+ *    6. 将分界值放入最终确定的分界下标. 
+ *    7. 返回分界下标. 
+ */  
+int part(sequence array[], int division, int left, int right) {  
+   sequence tmp = array[division];  
+   while(1) 
+   {  
+       while(isBig(tmp,array[left])) 
+       {  
+           left ++;  
+       }  
+       if(left >=  right) break;  
+       array[division] = array[left];  
+       division = left;  
+       while(isBig(array[right] , tmp)) 
+       {  
+           right --;  
+       }  
+       if(left >= right) break;  
+       array[division] = array[right];  
+       division = right;  
+   }  
+   array[division] = tmp;  
+   return division;  
+}  
+/*}}}*/
 /*void sort{{{*/
-void sort(sequence *res1500,int num)
-{
-    for(int i = 0;i < num - 1;i++)
-    {
-        for(int j = i+1;j < num;j++)
-        {
-            sequence tmp;
-            if ( isBig(res1500[i],res1500[j]) )
-            {
-                tmp = res1500[i];
-                res1500[i] = res1500[j];
-                res1500[j] = tmp;
-            }
-            
-        }
-        
-    }
-    
-}
+/* 
+ * 过程: 
+ *    1. 将整个left到right位置分治(分治之后左子数组, 分界值, 右子数组是有序的.) 
+ *    2. 将分治得到的左子数组和右子数组分别分治. 
+ *    3. 如果传入的left >= right, 说明要排序的部分元素少于或等于1个,  
+ *   那么必然是有序的,所以直接返回. 
+ */  
+void sort(sequence array[], int left, int right) {  
+   if(left >= right) {  
+      return ;  
+   }  
+   int division = (left + right) / 2;  
+   /*  
+    * printf("division: %d, ", array[division]); 
+    */  
+   int partition = part(array, division, left, right);  
+   /* 
+    *  printf("partition: %d, left: %d, right: %d, ", partition, left, right); 
+    *  printArray(array, LENGTH); 
+    */  
+   sort(array, left, partition - 1);  
+   sort(array, partition + 1, right);  
+} 
 /*}}}*/
 /*void printSeq{{{*/
 void printSeq(sequence *res1500,int num)
@@ -72,7 +114,7 @@ int main( int argc,char *argv[])
 
 
    sequence *res1500;
-   int maxNum[3] = {50,25,13};
+   int maxNum[3] = {40,21,15};
    int num = maxNum[0]*maxNum[1]*maxNum[2];
    res1500 = (sequence *)malloc(sizeof(sequence)*num);
    int ii,jj,kk;
@@ -90,17 +132,27 @@ int main( int argc,char *argv[])
            }
        }
    }
-   sort(res1500,num);
+   sort(res1500,0,num-1);
    printSeq(res1500,2000);
    sequence res1 = {20,0,0};
    sequence res2 = {6,8,6};
    printf("%d\n",isBig(res1,res2));
    
    printf("%f,%f\n",factor[0],factor[1]);
+   float indexFactor[3] = {1.0/log(2.0),1.0/log(3.0),1.0/log(5.0)};
+
+   for(int i = 0;i < 3;i++)
+   {
+       indexFactor[i] *= 100;
+       printf("%f,",indexFactor[i]);
+       
+   }
+   printf("\n");
+   
+
    
    
    free(res1500);
    
 }
 /*}}}*/
-
