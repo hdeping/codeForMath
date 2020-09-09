@@ -1,62 +1,59 @@
 #include "head.h"
-
-int week(int x,int y,int z);
-/*int main{{{*/
-int main( int argc,char *argv[]){
-    int a1[12] = {0,1,0,1,1,2,2,3,4,4,5,5};
-    int a2[12] ;
-    int i,j,k;
-
-    for(i = 0;i < 12;i++){
-        if ( i >= 2  ){
-            a2[i] = a1[i] - 1;
+/*void print_complex{{{*/
+void print_complex(fftw_complex *num,int len)
+{
+    printf("complex array\n");
+    for(int i = 0;i < len;i++)
+    {
+        for(int j = 0;j < 2;j++)
+        {
+            printf("%12.6lf ",num[i][j] );
         }
-        else{
-            a2[i] = 0;
-        }
+        printf("\n");
         
     }
-    for(i = 0;i < 12;i++){
-        printf("a1 = %d,a2 = %d\n",a1[i],a2[i]);
-        
+    
+}
+/*}}}*/
+/*void printVector{{{*/
+void printVector(double *num , int len)
+{
+    printf("vector \n");
+    for(int i = 0;i < len;i++)
+    {
+        printf("%lf \n",num[i]);
     }
 }
 /*}}}*/
-/*int week{{{*/
-int week (int x,int y,int z){
-   int num;
-   int ii;
-   int days;
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+    int n = 100;
+    fftw_complex *in,*out;
+    fftw_plan p;
 
-   days = 0;
-   if ( x < 0 ){
-       printf("Sorry, year is wrong\n");
-       
-   }
-   
-   switch(num){
-       case 1:
-           printf("today is Monday\n");
-           break;
-       case 2:
-           printf("today is Tuesday\n");
-           break;
-       case 3:
-           printf("today is Wednseday\n");
-           break;
-       case 4:
-           printf("today is Thursday\n");
-           break;
-       case 5:
-           printf("today is Friday\n");
-           break;
-       case 6:
-           printf("today is Saturday\n");
-           break;
-       default:
-           printf("today is Sunday\n");
-           break;
-   }
-   return num;
-}
+    in  = (fftw_complex *)fftw_malloc(sizeof(fftw_complex)*n);
+    out = (fftw_complex *)fftw_malloc(sizeof(fftw_complex)*n);
+    for(int i = 0;i < n;i++)
+    {
+        in[i][0] = 1.0*(i+1);
+        in[i][1] = 1.0;
+    }
+    double input_data[n];
+    double delta = 2E-2;
+    for(int i = 0;i < n;i++)
+    {
+        input_data[i] = sin(pi*delta*n);
+    }
+    print_complex(in,n);
+    p = fftw_plan_dft_1d(n,in,out,FFTW_FORWARD,FFTW_ESTIMATE);
+    print_complex(out,n);
+    p = fftw_plan_dft_r2c_1d(n,input_data,out,FFTW_FORWARD);
+    print_complex(out,n);
+    p = fftw_plan_dft_c2r_1d(n,out,input_data,FFTW_FORWARD);
+    printVector(input_data,n);
+    fftw_destroy_plan(p);
+    fftw_free(in);
+    fftw_free(out);
+}   
 /*}}}*/
