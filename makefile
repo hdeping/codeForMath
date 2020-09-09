@@ -1,10 +1,10 @@
-CC = gcc -g 
+CC = gcc -O3
 option = -o exe -ligraph
 object = main.o
 source = main.c
 run:$(object)
-	$(CC) $(option) $(object)
-	./exe
+	$(CC) $(object) $(option)
+	time ./exe
 2:
 	gcc -O2 main.c -o exe
 	./exe
