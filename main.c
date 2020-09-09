@@ -1,80 +1,135 @@
 #include "head.h"
+#define n 10000
+#define pi 3.141592653
 
-struct HuffmanTree
+/*double  gety{{{*/
+double  gety(double theta)
 {
-    char ch;
-    int weight;
-    struct HuffmanTree *left,*right;
-};
-typedef struct HuffmanTree tree;
-#define swap(x,y) tmp = (x);\
-(x) = (y);\
-(y) = tmp;
-
-#define dispaly_array(arr,len) for(int ii = 0;ii < len;ii++) \
-{\
-    printf("%d ",arr[ii]);\
-}\
-printf("\n");
-
-/*void sort{{{*/
-void sort(int *arr,int *index,int len)
+    double res;
+    res = pow(sin(theta),3);
+    res += 3.0*sin(theta)*pow(cos(theta),3)/
+        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
+    return res;
+}
+/*}}}*/
+/*double  getx{{{*/
+double  getx(double theta)
 {
-    int tmp;
-    for(int i = 0;i < len - 1;i++)
+    double res;
+    res = pow(cos(theta),3);
+    res += 3.0*cos(theta)*pow(sin(theta),3)/
+        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
+    return res;
+}
+/*}}}*/
+/*double func{{{*/
+double func(double theta)
+{
+    double res;
+    res = pow(sin(theta),3);
+    res += 3.0*sin(theta)*pow(cos(theta),3)/
+        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
+    res -= pow(cos(theta),3);
+    res -= 3.0*cos(theta)*pow(sin(theta),3)/
+        sqrt(pow(sin(theta),4) + pow(cos(theta),4));
+    return res;
+}
+/*}}}*/
+/*void solve{{{*/
+void solve(double *a,double *b)
+{
+    double middle;
+    middle = (*a + *b) / 2.0;
+    if ( func(middle) < 0.0 )
     {
-        for(int j = i + 1;j < len;j++)
-        {
-            if ( arr[i] < arr[j] )
-            {
-                swap(arr[i],arr[j]);
-                swap(index[i],index[j]);
-            }
-        }
+        *a = middle;
+    }
+    else
+    {
+        *b = middle;
     }
 }
 /*}}}*/
-/*void firstTraverse{{{*/
-void firstTraverse(tree *node)
+/*void cal1{{{*/
+void cal1()
 {
-    if ( node )
+    double a = 0.0;
+    double b = pi/4;
+    while ( b - a > 1E-8 )
     {
-        printf("node is %c\n",node ->  ch);
-        firstTraverse(node -> left );
-        firstTraverse(node -> right );
+        solve(&a,&b);
     }
+    printf("a = %lf\n",a);
+    printf("b = %lf\n",b);
     
+    printf("%lf\n",pi/a);
+    printf("%lf\n",func(a));
+    printf("%lf\n",func(pi/2 - a));
+
+    // get calculus
+    double arrx[n];
+    double arry[n];
+    double delta = a/n;
+    for(int i = 0;i < n;i++)
+    {
+        double theta = i*delta;
+        arrx[i] = getx(theta);
+        arry[i] = gety(theta);
+    }
+    double calculus = 0.0;
+    for(int i = 0;i < n - 1;i++)
+    {
+        delta = (arry[i+1]-  arry[i]);
+        calculus += arrx[i]*delta;
+    }
+    printf("calculus is %lf\n",calculus);
+}
+/*}}}*/
+/*void cal2{{{*/
+void cal2()
+{
+    double a = 0.0;
+    double b = pi/4;
+    while ( b - a > 1E-8 )
+    {
+        solve(&a,&b);
+    }
+    printf("a = %lf\n",a);
+    printf("b = %lf\n",b);
+    
+    printf("%lf\n",pi/a);
+    printf("%lf\n",func(a));
+    printf("%lf\n",func(pi/2 - a));
+
+    // get calculus
+    double arrx[n];
+    double arry[n];
+    double delta = (pi/4.0 - a)/n;
+    double coef = sqrt(0.5);
+    for(int i = 0;i < n;i++)
+    {
+        double theta = a + i*delta;
+        double tmp1 = getx(theta);
+        double tmp2 = gety(theta);
+        arrx[i] = coef*(tmp1   + tmp2);
+        arry[i] = coef*(- tmp1 + tmp2);
+    }
+    printf("begin %lf,%lf\n",arrx[0],arry[0]);
+    printf("end   %lf,%lf\n",arrx[n - 1],arry[n - 1]);
+
+    double calculus = 0.0;
+    for(int i = 0;i < n - 1;i++)
+    {
+        delta = (arrx[i+1]-  arrx[i]);
+        calculus += arry[i]*delta;
+    }
+    printf("calculus is %lf\n",calculus);
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    char num[5] = "abcde";
-    int weight[5] = {1,2,4,8,9};
-    int index[5]  = {0,1,2,3,4};
-    tree data[9];
-    
-
-    for(int i = 0;i < 5;i++)
-    {
-        data[i].ch     = num[i];
-        data[i].weight = weight[i];
-        data[i].left   = NULL ;
-        data[i].right  = NULL ;
-    }
-    for(int i = 0;i < 4;i++)
-    {
-        sort(weight,index,5 - i);
-        dispaly_array(weight,5 - i);
-        weight[3 - i]  +=   weight[4 - i];
-        int j = 5 + i;
-        data[j].ch = '0';
-        data[j].weight = weight[3-i];
-        data[j].left   = data + index[3-i];
-        data[j].right  = data + index[4-i];
-        index[3 - i]   = j;
-        dispaly_array(index,5 - i);
-    }
-    firstTraverse(data+8);
+    cal1();
+    cal2();
 }
 /*}}}*/
