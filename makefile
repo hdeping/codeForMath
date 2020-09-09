@@ -1,8 +1,8 @@
-CC = gcc -g -o exe
+CC = gcc -g 
 object = main.o
 source = main.c
 run:$(object)
-	$(CC) $(object)
+	$(CC) $(object) -o exe
 	./exe
 2:
 	gcc -O2 main.c -o exe

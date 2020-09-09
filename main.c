@@ -5,13 +5,13 @@
 double getx(double *num,double alpha)
 {
     double an = 0.5;
-    for(int i = 0;i < 30;i++)
+    for(int i = 0;i < n;i++)
     {
-        an = alpha*an*(1-an);
+        an = 1.0 - alpha*an*an;
     }
     for(int i = 0;i < n;i++)
     {
-        an = alpha*an*(1-an);
+        an = 1.0 - alpha*an*an;
         num[i] = an;
     }
     return an;
@@ -27,15 +27,15 @@ int main( int argc,char *argv[])
     fp= fopen("data.txt","w");
     assert(fp != NULL);
 
-    for(int i = 0;i < 200;i++)
+    for(int i = 0;i < 260;i++)
     {
-        if ( i < 100 )
+        if ( i < 60)
         {
-            alpha = 0.03*(i + 1);
+            alpha = -0.25 + 0.024*(i + 1);
         }
         else
         {
-            alpha = 3+0.01*(i - 99);
+            alpha = 1.2+0.004*(i - 61);
         }
         getx(num,alpha);
         for(int j = 0;j < n;j++)
