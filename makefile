@@ -20,3 +20,7 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
+#ffmpeg -i %4d.png -vb 250k -maxrate 300k -minrate 200k -bf 5 -b_strategy 0 lorentz.mp4
+#ffmpeg -i %4d.png -vb 250k -pass 2 -passlogfile ffmpeg2pass lorentz.mp4
+f:
+	ffmpeg -i %4d.png -vb 400k lorentz.mp4
