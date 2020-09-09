@@ -1,6 +1,6 @@
 #include "head.h"
 
-int adj[n][n] ;
+int adj[m][3] ;
 /*void print_num{{{*/
 void print_num(int *num,int len)
 {
@@ -22,19 +22,30 @@ void getSerial(int *serial,int num)
     // print_num(serial,m);
 }
 /*}}}*/
+/*void init_graph{{{*/
+void init_graph()
+{
+    adj[0][1] = 0;     adj[0][2] = 1;
+    adj[1][1] = 0;     adj[1][2] = 3;
+    adj[2][1] = 0;     adj[2][2] = 4;
+    adj[3][1] = 1;     adj[3][2] = 2;
+    adj[4][1] = 2;     adj[4][2] = 3;
+    adj[5][1] = 2;     adj[5][2] = 4;
+    adj[6][1] = 1;     adj[6][2] = 4;
+    adj[7][1] = 3;     adj[7][2] = 4;
+}
+/*}}}*/
 /*void getGraph{{{*/
 void getGraph(int *serial)
 {
-    adj[0][1] = serial[0];
-    adj[0][3] = serial[1];
-    adj[0][4] = serial[2];
-    adj[1][2] = serial[3];
-    adj[2][3] = serial[4];
-    adj[2][4] = serial[5];
-    adj[1][4] = serial[6];
-    adj[3][4] = serial[7];
-    adj[0][2] = 0;
-    adj[1][3] = 0;
+    adj[0][0] = serial[0];
+    adj[1][0] = serial[1];
+    adj[2][0] = serial[2];
+    adj[3][0] = serial[3];
+    adj[4][0] = serial[4];
+    adj[5][0] = serial[5];
+    adj[6][0] = serial[6];
+    adj[7][0] = serial[7];
 }
 /*}}}*/
 /*int judge_connect{{{*/
@@ -45,14 +56,12 @@ int judge_connect()
     {
         index[i] = i;
     }
-    for(int i = 0;i < n - 1;i++)
+    for(int i = 0;i < m;i++)
     {
-        for(int j = i + 1;j < n;j++)
+        int *num = adj[i];
+        if ( num[0] == 1  )
         {
-            if ( adj[i][j] == 1    )
-            {
-                index[i] = index[j];
-            }
+            index[num[1]] = index[num[2]];
         }
     }
     // print_num(index,n);
@@ -89,6 +98,7 @@ int main( int argc,char *argv[]){
     {
         count[i] = 0;
     }
+    init_graph();
     for(int i = 0;i < total;i++)
     {
         getSerial(serial,i);
