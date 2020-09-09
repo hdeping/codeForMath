@@ -2,7 +2,7 @@
 
 /*void print_matrix{{{*/
 /* Auxiliary routine: printing a matrix */
-void print_matrix( char* desc, lapack_int m, lapack_int n, lapack_complex_float * a, lapack_int lda ) {
+void print_matrix( char* desc, lapack_int m, lapack_int n, float * a, lapack_int lda ) {
     lapack_int i, j;
     printf( "\n %s\n", desc );
     FILE *fp;
@@ -22,34 +22,18 @@ void print_matrix( char* desc, lapack_int m, lapack_int n, lapack_complex_float 
     return ;
 }
 /*}}}*/
-/*void get_eigen{{{*/
-void get_eigen(lapack_complex_float *data,int size, lapack_complex_float *eigenValue,
-        lapack_complex_float *leftState,lapack_complex_float *rightState)
-{
-    lapack_int info;
-    /* Solve eigenproblem */
-    info = LAPACKE_cgeev( LAPACK_COL_MAJOR, 'v', 'v', size, 
-                          data, size, eigenValue, leftState, size, rightState, size);
-    /* Check for convergence */
-
-    if( info > 0 ) {
-        printf( "The algorithm failed to compute eigenvalues.\n" );
-        exit( 1 );
-    }
-    return ;
-}
-/*}}}*/
 /*void getData{{{*/
-void getData(lapack_complex_float *data, int n)
+void getData(float *data, int n)
 {
     double x1;
     int num;
-    for(int i = 0;i < n ;i++)
+    for(int i = 0;i < n - 1;i++)
     {
-        for(int j = 0;j < n;j++)
+        for(int j = i;j < n;j++)
         {
             num = i*n + j;
             data[num] = rand() / total - 0.5;
+            data[j*n + i] = data[num];
         }
         
     }
@@ -57,7 +41,7 @@ void getData(lapack_complex_float *data, int n)
 }
 /*}}}*/
 /*void eigenDist{{{*/
-void eigenDist(lapack_complex_float *eigenValue,int size)
+void eigenDist(float *eigenValue,int size)
 {
     float *value;
     value = (float *)malloc(sizeof(float)*size);
@@ -93,12 +77,12 @@ int main(int argc, char **argv) {
     int n = atoi(argv[1]);
     // int n = 200;
     /* Local arrays */
-    lapack_complex_float  *data,*eigenValue,*leftState,*rightState;
-    data       = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
-    leftState  = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
-    rightState = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
+    float  *data,*eigenValue,*leftState,*rightState;
+    data       = (float *)malloc(sizeof(float)*n*n);
+    leftState  = (float *)malloc(sizeof(float)*n*n);
+    rightState = (float *)malloc(sizeof(float)*n*n);
 
-    eigenValue = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n);
+    eigenValue = (float *)malloc(sizeof(float)*n);
     
     // get data
     getData(data,n);
@@ -112,9 +96,7 @@ int main(int argc, char **argv) {
     int size = n;
     clock_t clock1,clock2;
     clock1 = clock();
-    // info = LAPACKE_cgeev( LAPACK_COL_MAJOR, 'v', 'v', size, 
-    //                       data, size, eigenValue, leftState, size, rightState, size);
-    info = LAPACKE_cgeev( LAPACK_COL_MAJOR, 'N', 'N', size, 
+    info = LAPACKE_sgeev( LAPACK_COL_MAJOR, 'N', 'N', size, 
                           data, size, eigenValue, leftState, size, rightState, size);
     clock2 = clock();
     printf("time is %f\n",(clock2 - clock1)*1E-6);
@@ -125,7 +107,7 @@ int main(int argc, char **argv) {
 
     
     /* Print eigenvalues */
-    // print_matrix( "Eigenvalues", 1, n, eigenValue, 1 );
+    print_matrix( "Eigenvalues", 1, n, eigenValue, 1 );
     
     free(leftState);
     free(rightState);
