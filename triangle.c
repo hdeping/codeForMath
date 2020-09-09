@@ -1,4 +1,6 @@
 #include "head.h"
+#include <gsl/gsl_linalg.h>
+
 /*point *get_point{{{*/
 point *get_point(double x,double y)
 {
@@ -172,5 +174,12 @@ void escribed_circle(tri *delta)
     p    = (c+a-b) / 2.0;
     res  = area / p;
     printf("    R3 = %lf\n",res);
+}
+/*}}}*/
+// get circle dot
+/*point * dot_circucircle{{{*/
+point * dot_circucircle(point *line1,point *p1,point *line2,point *p2)
+{
+
 }
 /*}}}*/
