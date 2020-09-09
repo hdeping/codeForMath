@@ -10,12 +10,13 @@
 
 #define total (1.0*RAND_MAX)
 #define m 100
-#define nn 10000
+#define nn 10
 
 typedef struct timeval new_time;
 void getdat(int n);
 void readdat(int n);
-void print_num();
+void print_num(int *);
+void print_time(double *);
 double get_time(new_time,new_time);
 void selectSort(int *);
 void sortTest(int *);

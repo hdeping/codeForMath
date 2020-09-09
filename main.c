@@ -6,7 +6,7 @@ int main( int argc,char *argv[]){
     readdat(nn);
     double time[m];
     int *p;
-    for(int i = 0;i < m;i++)
+    for(int i = 0;i < 2;i++)
     {
         p = num[i];
         printf("i = %d\n",i);
@@ -19,23 +19,29 @@ int main( int argc,char *argv[]){
         sortTest(p);
     }
     analyze_time(time);
-    print_num(time);
+    print_time(time);
 }
 /*}}}*/
 /*void selectSort{{{*/
 void selectSort(int *num)
 {
-    for(int i = 0;i < nn - 1;i++)
+    for(int i = 0;i < nn/2;i++)
     {
-        int max = i;
-        for(int j = i + 1;j < nn;j++)
+        int min = i;
+        int max = nn - i - 1;
+        for(int j = i + 1;j < nn - i - 1;j++)
         {
-            if ( num[max] < num[j] )
+            if ( num[j] < num[min] )
+            {
+                min = j;
+            }
+            if ( num[j] > num[max] )
             {
                 max = j;
             }
         }
-        swap(num+max,num+i);
+        swap(num+min,num+i);
+        swap(num+max,num+nn - i - 1);
     }
     
 }
@@ -122,8 +128,8 @@ void readdat(int n)
     fclose(fp);
 }
 /*}}}*/
-/*void print_num{{{*/
-void print_num(double *num)
+/*void print_time{{{*/
+void print_time(double *num)
 {
     printf("----start------\n");
     FILE *fp;
@@ -134,6 +140,16 @@ void print_num(double *num)
         fprintf(fp,"%lf\n",num[i]);
     }
     fclose(fp);
+}
+/*}}}*/
+/*void print_num{{{*/
+void print_num(int *num)
+{
+    printf("----start------\n");
+    for(int i = 0;i < nn;i++)
+    {
+        printf("%lf\n",num[i]);
+    }
 }
 /*}}}*/
 /*double get_time{{{*/
