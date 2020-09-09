@@ -3,28 +3,6 @@
 #define cy_times 40
 
 char conway[n];
-/*void lookAndSay{{{*/
-void lookAndSay(char *next,char *previous)
-{
-    next[0] = '\0';
-    int len = strlen(previous);
-    int count = 1;
-    for(int i = 0;i < len;i++)
-    {
-        if ( previous[i] == previous[i+1]  )
-        {
-            count++;
-        }
-        else
-        {
-            sprintf(next,"%s%d%c",next,count,previous[i]);
-            count = 1;
-        }
-    }
-    
-    
-}
-/*}}}*/
 /*void statistics{{{*/
 void statistics(int *stati,char *conway,int m)
 {
@@ -41,10 +19,62 @@ void statistics(int *stati,char *conway,int m)
     }
 }
 /*}}}*/
+/*void getSymbol{{{*/
+void getSymbol(int *symbol,int len)
+{
+    int order = (int)(log(len*1.0)/log(3.0) + 0.1);
+    int *arr;
+    arr = (int *)malloc(sizeof(int)*order);
+    for(int i = 0;i < len;i++)
+    {
+        int tmp = i;
+        for(int j = 0;j < order;j++)
+        {
+            arr[j] = tmp % 3;
+            tmp    = tmp / 3;
+        }
+        // get symbol
+        symbol[i] = 0;
+        for(int j = 0;j < order;j++)
+        {
+            symbol[i] = 10*symbol[i] + arr[order-j-1] + 1;
+        }
+    }
+
+    free(arr);
+    
+}
+/*}}}*/
+/*void sort{{{*/
+void sort(int *stati,double *result,int *symbol,int len)
+{
+    int tmp;
+    double tmp1;
+    for(int i = 0;i < len - 1;i++)
+    {
+        for(int j = i + 1;j < len;j++)
+        {
+            if ( stati[i] < stati[j] )
+            {
+                // swap
+                tmp       = stati[i];
+                stati[i]  = stati[j];
+                stati[j]  = tmp;
+                tmp       = symbol[i];
+                symbol[i] = symbol[j];
+                symbol[j] = tmp;
+                tmp1      = result[i];
+                result[i] = result[j];
+                result[j] = tmp1;
+            }
+        }
+    }
+}
+/*}}}*/
 /*void print_result{{{*/
 void print_result(int *stati,int len)
 {
-    int order = (int)(log(len*1.0)/log(3.0));
+    int order = (int)(log(1.0 + len*1.0)/log(3.0) + 0.1);
     printf("when order is %d\n",order);
     
     int sum = 0;
@@ -60,35 +90,30 @@ void print_result(int *stati,int len)
         result[i] = (double)stati[i] / sum;
     }
     int *symbol;
-    symbol = (int *)malloc(sizeof(int)*order);
+    symbol = (int *)malloc(sizeof(int)*len);
+    getSymbol(symbol,len);
+    sort(stati,result,symbol,len);
     for(int i = 0;i < len;i++)
     {
-        int tmp = i;
-        for(int j = 0;j < order;j++)
-        {
-            symbol[j] = tmp % 3;
-            tmp       = tmp / 3;
-        }
-        // print symbol
-        for(int j = 0;j < order;j++)
-        {
-            printf("%d",symbol[order-j-1]+1);
-        }
-        printf(" ");
-        
-        printf("%10d %10.8lf\n",stati[i],result[i]);
+        printf("%10d %10d %10.8lf\n",symbol[i],stati[i],result[i]);
     }
     free(symbol);
     free(result);
 }
 /*}}}*/
+/*void run{{{*/
+void run()
+{
+}
+/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
+    run();
 
     // file output
     FILE *fp;
-    fp= fopen("data.txt","r");
+    fp= fopen("conway.txt","r");
     assert(fp != NULL);
     
     // read file and get statistics data
@@ -96,6 +121,7 @@ int main( int argc,char *argv[])
     int stati2[9] = {0};
     int stati3[27] = {0};
     int stati4[81] = {0};
+    int stati5[243] = {0};
     while ( !feof(fp) )
     {
         fgets(conway,n,fp);
@@ -103,15 +129,16 @@ int main( int argc,char *argv[])
         statistics(stati2,conway,2);
         statistics(stati3,conway,3);
         statistics(stati4,conway,4);
+        statistics(stati5,conway,5);
     }
     
     print_result(stati,3);
     print_result(stati2,9);
     print_result(stati3,27);
     print_result(stati4,81);
+    print_result(stati5,243);
 
     
     fclose(fp);
-    
 }
 /*}}}*/
