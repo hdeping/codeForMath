@@ -18,12 +18,10 @@ void print_mat(int (*mat)[n], int size)
     
 }
 /*}}}*/
-/*int main{{{*/
-int main( int argc,char *argv[])
+/*void get_mat{{{*/
+void get_mat(int (*adj)[n],int *class)
 {
-
     int num1[5],num2[3];
-    int adj[n][n] = {0} ;
     // get data from the file
     FILE *fp;
     fp= fopen("data.txt","r");
@@ -34,15 +32,16 @@ int main( int argc,char *argv[])
     m2 = 5;
     for(int i = 0;i < m1;i++)
     {
+        int num = 1 << i;
         for(int j = 0;j < m2;j++)
         {
             fscanf(fp,"%d",num1+j);
-            printf("%3d ",num1[j]);
+            // printf("%3d ",num1[j]);
+            class[num1[j]] += num; 
             
         }
-        printf("\n");
+        // printf("\n");
         
-
         for(int j = 0;j < m2 - 1;j++)
         {
             for(int k = j + 1;k < m2;k++)
@@ -62,12 +61,14 @@ int main( int argc,char *argv[])
     
     for(int i = 0;i < m1;i++)
     {
+        int num = 1 << (6+i);
         for(int j = 0;j < m2;j++)
         {
             fscanf(fp,"%d",num2+j);
-            printf("%3d ",num2[j]);
+            // printf("%3d ",num2[j]);
+            class[num2[j]] += num; 
         }
-        printf("\n");
+        // printf("\n");
         for(int j = 0;j < m2 - 1;j++)
         {
             for(int k = j + 1;k < m2;k++)
@@ -82,13 +83,40 @@ int main( int argc,char *argv[])
         }
     }
 
-    
-
     fclose(fp);
+}
+/*}}}*/
+/*void getBit{{{*/
+void getBit(int *class)
+{
+    for(int i = 0;i < n;i++)
+    {
+        printf("class[%2d] = %7d ",i,class[i]);
+        
+        int num = class[i];
+        while ( num > 0)
+        {
+            printf("%d",num & 1);
+            num = num >> 1;
+        }
+        printf("\n");
+        
+        
+    }
+    
+}
+/*}}}*/
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+
+    int class[n] = {0};
+    int adj[n][n] = {0} ;
+    get_mat(adj,class);
+    getBit(class);
     // print_mat(adj,n);
-
-
     int count = 0;
+    int line = 0;
     for(int i = 0;i < n - 2;i++)
     {
         for(int j = i + 1;j < n - 1;j++)
@@ -99,9 +127,13 @@ int main( int argc,char *argv[])
                 if (  adj[i][j]  == 1 && adj[i][k]  == 1 && adj[j][k]  == 1 )
                 {
                     count++;
-                    printf("%3d %3d %3d\n",i,j,k);
+                    int num = class[i]&class[j]&class[k];
+                    if ( num )
+                    {
+                        line++;
+                    }
                     
-
+                    printf("%3d %3d %3d %6d\n",i,j,k,num);
                 }
                 
             }
@@ -109,8 +141,9 @@ int main( int argc,char *argv[])
         }
     }
     printf("count = %d\n",count);
+    printf("line = %d\n",line);
     
-    
+
     
 
 }
