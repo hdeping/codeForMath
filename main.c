@@ -1,173 +1,88 @@
 #include "head.h"
 
-typedef struct timeval new_time;
+int adj[n][n] ;
 /*void print_num{{{*/
-void print_num(long *num)
+void print_num(int *num,int len)
 {
-    long n = 3;
-    for(long i = 0;i < n - 1;i++)
+    for(int i = 0;i < len;i++)
     {
-        printf("%d,",num[i]);
+        printf("%d ",num[i]);
     }
-    printf("%d\n",num[n-1]);
+    printf("\n");
+    
 }
 /*}}}*/
-/*void adjust_num{{{*/
-void adjust_num(long *num)
+/*void getSerial{{{*/
+void getSerial(int *serial,int num)
 {
-    long n = 3;
-    long num1,num2;
-    for(long i = 0;i < n - 1;i++)
+    int num1 = num,num2;
+    for(int i = 0;i < m;i++)
     {
-        if ( num[i] >= digit )
-        {
-            num1 = num[i] % digit;
-            num2 = num[i] / digit;
-            num[i] = num1;
-            num[i+1]  += num2; 
-        }
+        serial[i] = num1 % 2;
+        num1  = num1 / 2;
     }
+    // print_num(serial,m);
 }
 /*}}}*/
-/*void get_time{{{*/
-void get_time(new_time start,new_time end)
+/*void getGraph{{{*/
+void getGraph(int *serial)
 {
-    double time;
-    time = end.tv_sec-start.tv_sec;
-    time += 1E-6*(end.tv_usec-start.tv_usec);
-    printf("time = %lf\n",time);
+    adj[0][1] = serial[0];
+    adj[0][3] = serial[1];
+    adj[0][4] = serial[2];
+    adj[1][2] = serial[3];
+    adj[2][3] = serial[4];
+    adj[2][4] = serial[5];
+    adj[1][4] = serial[6];
+    adj[3][4] = serial[7];
+    adj[0][2] = 0;
+    adj[1][3] = 0;
 }
 /*}}}*/
-/*void findSolution{{{*/
-void findSolution(long n)
+/*int judge_connect{{{*/
+int judge_connect()
 {
-    long num;
-    for(long x = 1;x < n;x++)
+    int index[n];
+    for(int i = 0;i < n;i++)
     {
-        for(long y = x;y < n;y++)
+        index[i] = i;
+    }
+    for(int i = 0;i < n - 1;i++)
+    {
+        for(int j = i + 1;j < n;j++)
         {
-            for(long z = y;z < n;z++)
+            if ( adj[i][j] == 1    )
             {
-                num = x*x*x*x+y*y*y*y+z*z*z*z;
+                index[i] = index[j];
             }
         }
     }
-}
-/*}}}*/
-/*void run{{{*/
-void run()
-{
-    long n;
-    new_time start,end;
-    for(long i = 1;i < 10;i++)
+    // print_num(index,n);
+    if ( index[0] == index[2]  )
     {
-        n = 100*i;
-        gettimeofday(&start,NULL );
-        findSolution(n);
-        gettimeofday(&end,NULL );
-        printf("n = %d ",n);
-        get_time(start,end);
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
 /*}}}*/
-/*void remain{{{*/
-void remain(int *res)
-{
-    long n = 10000;
-    long num;
-    FILE *fp;
-    fp= fopen("output.txt","w");
-    assert(fp != NULL);
-    for(long i = 0;i < n;i++)
-    {
-        num = 1;
-        for(long j = 0;j < 4;j++)
-        {
-            num = (num*i) % 10000;
-        }
-        res[i] = num;
-    }
-    fclose(fp);
-}
-/*}}}*/
-/*void findRemain{{{*/
-void findRemain()
-{
-    FILE *fp;
-    fp= fopen("out.txt","r");
-    assert(fp != NULL);
-    long n = 252;
-    long *arr;
-    arr = (long *)malloc(sizeof(int)*n);
-    for(long i = 0;i < n;i++)
-    {
-        fscanf(fp,"%d",arr+i);
-    }
-    fclose(fp);
-    fp= fopen("remain.txt","w");
-    assert(fp != NULL);
-    long num;
-    for(long i = 0;i < n;i++)
-    {
-        for(long j = i;j < n;j++)
-        {
-            for(long k = j;k < n;k++)
-            {
-                num = arr[i]+arr[j]+arr[k];
-                num = num % 10000;
-                for(long kk = 0;kk < n;kk++)
-                {
-                    if ( num == arr[kk]  )
-                    {
-                        fprintf(fp,"%5d%5d%5d%5d\n",
-                                arr[i],arr[j],arr[k],arr[kk]);
-                    }
-                }
-            }
-            
-        }
-        
-    }
-    fclose(fp);
-    free(arr);
-}
-/*}}}*/
-/*void add{{{*/
-void add(long *s,long *a,long *b)
-{
-    long n = 3;
-    for(long i = 0;i < n;i++)
-    {
-        s[i] = 0;
-    }
-    adjust_num(a);
-    adjust_num(b);
-    for(long i = 0;i < n;i++)
-    {
-        s[i] += a[i] + b[i];
-    }
-    adjust_num(s);
-}
-/*}}}*/
-/*void multi{{{*/
-void multi(long *a,long b)
-{
-    long n = 3;
-    adjust_num(a);
-    for(int j = 0;j < 4;j++)
-    {
-        for(long i = 0;i < n;i++)
-        {
-            a[i] = a[i] * b;
-        }
-        adjust_num(a);
-    }
-}
-/*}}}*/
-/*long main{{{*/
+/*int main{{{*/
 int main( int argc,char *argv[]){
-    // run();
-    // 存储顺序与正常顺序相反
-
+    int serial[m];
+    int total = (int)pow(2,m);
+    int num = 0;
+    printf("total = %d\n",total);
+    int res;
+    for(int i = 0;i < total;i++)
+    {
+        getSerial(serial,i);
+        getGraph(serial);
+        res = judge_connect(); 
+        num += res;
+        printf("num = %d\n",res);
+    }
+    printf("num = %d\n",num);
 }
 /*}}}*/

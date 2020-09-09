@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 #include <assert.h>
-#include <sys/time.h>
+#include <math.h>
 
-#define digit (int)1E9
+#define n 5
+#define m 8
+
