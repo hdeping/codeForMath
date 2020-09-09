@@ -15,4 +15,5 @@ clean:
 g:
 	$(CC) $(source)
 	gdb exe
-all:clean run
+all:clean  $(object)
+	$(CC) $(object)

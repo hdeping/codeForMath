@@ -10,7 +10,7 @@
 
 #define total (1.0*RAND_MAX)
 #define m 100
-#define nn 100000
+#define nn 10
 
 typedef struct timeval new_time;
 void getdat(int n);
@@ -25,6 +25,7 @@ int sortTest(int *);
 void swap(int *,int *);
 void analyze_time(double *);
 void heapTest(int *,int);
+void heapTest2(int *,int);
 void HeapAdjust(int *num,int s, int length);
 void BuildingHeap(int *num, int length);  
 

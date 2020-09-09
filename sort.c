@@ -4,12 +4,19 @@
 void heapSort(int *num)
 {
     //build a headp
+    printf("before heaping\n");
+    print_num(num,nn);  
     BuildingHeap(num,nn);  
+    printf("after heaping\n");
+    print_num(num,nn);  
     // adjust the list from the last element
     for (int i = nn - 1; i > 0; --i)  
     {  
+        printf("size = %d\n",i+1);
         swap(num,num+i);
+        print_num(num,i+1);  
         HeapAdjust(num,0,i);  
+        heapTest2(num,i);
   }  
 }
 /*}}}*/
@@ -17,93 +24,32 @@ void heapSort(int *num)
 void HeapAdjust(int *num,int s, int length)  
 {  
     int tmp  = num[s];  
-    int child = 2*s+1; //左孩子结点的位置。(i+1 为当前调整结点的右孩子结点的位置)  
+    int child = 2*s+1; 
     while (child < length) {  
         if(child+1 <length && num[child]<num[child+1]) { 
-            // 如果右孩子大于左孩子(找到比当前待调整结点大的孩子结点)  
             ++child ;  
         }  
-        if(num[s]<num[child]) {  // 如果较大的子结点大于父结点  
-            num[s] = num[child]; // 那么把较大的子结点往上移动，替换它的父结点  
-            s = child;       // 重新设置s ,即待调整的下一个结点的位置  
+        if(num[s]<num[child]) 
+        {  
+            num[s] = num[child];
+            s = child;       
             child = 2*s+1;  
-        }  else {            // 如果当前待调整结点大于它的左右孩子，则不需要调整，直接退出  
+        }  
+        else {            
              break;  
         }  
-        num[s] = tmp;         // 当前待调整的结点放到比其大的孩子结点位置上  
+        num[s] = tmp;         
     }  
-    // print_num(num,length);  
 }  
 /*}}}*/
 /*void BuildingHeap{{{*/
 void BuildingHeap(int *num, int length)  
 {   
-    //最后一个有孩子的节点的位置 i=  (length -1) / 2  
     for (int i = (length -1) / 2 ; i >= 0; --i)  
+    {
         HeapAdjust(num,i,length);  
+    }
 }  
-/*}}}*/
-/*void makeheap{{{*/
-void makeheap(int *num,int size)
-{
-    int node = (size - 1)/2;
-    int child[2];
-    for(int i = node;i >= 0;i--)
-    {
-        child[0] = 2*i+1;
-        child[1] = child[0] + 1;
-        if ( child[1] == size  )
-        {
-            if ( num[child[0]] < num[i] )
-            {
-                swap(num+child[0],num+i);
-            }
-            continue; 
-        }
-        int min = i;
-        for(int j = 0;j < 2;j++)
-        {
-            if ( num[child[j]] < num[min] )
-            {
-                min = child[j];
-            }
-        }
-        if ( min != i  )
-        {
-            swap(num+min,num+i);
-        }
-    }
-}
-/*}}}*/
-/*void adjustHeap{{{*/
-void adjustHeap(int *num,int size)
-{
-    int node = (size-1)/2;
-    int min = 0;
-    int i;
-    printf("size = %d,node = %d\n",size,node);
-    
-    do
-    {
-        // printf("min = %d\n",min);
-        i = min;
-        // printf("i = %d\n",i);
-        int left,right;
-        left  = 2*i+1;
-        right = left + 1;
-        if ( num[left] < num[min] )
-        {
-            min = left;
-        }
-        if ( num[right] < num[min] )
-        {
-            min = right;
-        }
-        swap(num+min,num+i);
-        // printf("i = %d,min = %d\n",i,min);
-    }
-    while(!(min == i || min>node));
-}
 /*}}}*/
 /*int sortTest{{{*/
 int sortTest(int *num)
@@ -138,18 +84,18 @@ int sortTest(int *num)
     }
     if ( res == nn - 1  )
     {
-        printf("sequence is POSITIVE order\n");
+        // printf("sequence is POSITIVE order\n");
         return 1;
         
     }
     else if ( res == 1 - nn  )
     {
-        printf("sequence is NEGATIVE order\n");
+        // printf("sequence is NEGATIVE order\n");
         return -1;
     }
     else
     {
-        printf("there is no order\n");
+        // printf("there is no order\n");
         return 0;
     }
 }
@@ -179,6 +125,38 @@ void heapTest(int *num,int size)
     if ( tmp == 0  )
     {
         printf("Minimal Heap!\n");
+    }
+    else
+    {
+        printf("NOT Heap\n");
+    }
+}
+/*}}}*/
+/*void heapTest2{{{*/
+void heapTest2(int *num,int size)
+{
+    int tmp = 0;
+    for(int i = 0;i < size;i++)
+    {
+        int i1,i2;
+        i1 = 2*i+1;
+        i2 = i1+1;
+        if ( num[i] < num[i1])
+        {
+            tmp++;
+        }
+        if ( i2 >= size  )
+        {
+            break;
+        }
+        if (num[i] < num[i2])
+        {
+            tmp++;
+        }
+    }
+    if ( tmp == 0  )
+    {
+        printf("Maximal Heap!\n");
     }
     else
     {
@@ -289,7 +267,7 @@ double get_time(new_time start,new_time end)
     double time;
     time = end.tv_sec-start.tv_sec;
     time += 1E-6*(end.tv_usec-start.tv_usec);
-    printf("time is %lf\n",time );
+    // printf("time is %lf\n",time );
     return time;
 }
 /*}}}*/

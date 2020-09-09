@@ -5,6 +5,7 @@ void run()
     double time[m];
     int *p;
     int recordOrder = 0;
+    double countTime = 0.0;
     for(int i = 0;i < m;i++)
     {
         printf("-------i = %d -------\n",i);
@@ -15,12 +16,14 @@ void run()
         gettimeofday(&start,NULL );
         heapSort(p);
         gettimeofday(&end,NULL );
-        time[i] = get_time(start,end);
+        countTime += get_time(start,end);
         recordOrder +=  sortTest(p);
     }
-    analyze_time(time);
-    print_time(time);
-    printf("record Order is %d\n",recordOrder);
+    countTime /= m; 
+    // analyze_time(time);
+    // print_time(time);
+    printf("%4d %10.5lf times: %4d\n",nn/100000,
+              countTime,recordOrder);
 }
 /*}}}*/
 /*void test{{{*/
