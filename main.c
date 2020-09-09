@@ -2,21 +2,30 @@
 /*void get_graph{{{*/
 void get_graph(graph *g)
 {
+    double p = g -> p; 
     for(int i = 0;i < n;i++)
     {
         for(int j = 0;j < n;j++)
         {
-            g ->  matrix[i][j]  = inf;
+            if ( i == j  )
+            {
+                g -> matrix[i][j]  = 0; 
+            }
+            else
+            {
+                g ->  matrix[i][j]  = inf;
+            }
         }
     }
-    for(int i = 0;i < n;i++)
+    for(int i = 0;i < n - 1;i++)
     {
-        for(int j = 0;j < n;j++)
+        for(int j = i + 1;j < n;j++)
         {
             float x1 = rand() / total;
             if ( x1 < p )
             {
                 g -> matrix[i][j] = 1; 
+                g -> matrix[j][i] = 1; 
             }
             
         }
@@ -76,6 +85,7 @@ int main( int argc,char *argv[]){
     srand(time(NULL)); 
     graph network;
     network.vertex = n;
+    network.p      = 0.3;
     get_graph(&network);
     Floyd(&network);
 }
