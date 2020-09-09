@@ -1,66 +1,102 @@
 #include "head.h"
-#define ran (rand() / (1.0*RAND_MAX))
-/*int get_position{{{*/
-int get_position(double x1)
+
+/*void get_week{{{*/
+void get_week(int days)
 {
-    double a[n] = {0.25,0.75,1.00};
-    int k1,k2,k3;
-    k1 = 0;
-    k2 = n - 1;
-    while ( 1 )
+    int week;
+    week = days % 7;
+    switch(week)
     {
-        k3 = (k2+k1)/2;
-        if ( x1 > a[k3] )
-        {
-            k1 = k3;
-        }
-        else
-        {
-            k2 = k3;
-        }
-        if ( k1 == k2-1  )
-        {
-            if ( k1 == 0  )
-            {
-                if ( x1 < a[0]  )
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-                
-            }
-            else
-            {
-                return k2;
-            }
-        }
+        case 1:
+            printf("Today is Monday\n");
+            break;
+        case 2:
+            printf("Today is Tuesday\n");
+            break;
+        case 3:
+            printf("Today is Thirsday\n");
+            break;
+        case 4:
+            printf("Today is Wednday\n");
+            break;
+        case 5:
+            printf("Today is Friday\n");
+            break;
+        case 6:
+            printf("Today is Saturday\n");
+            break;
+        default:
+            printf("Today is Sunday\n");
+            break;
     }
     
 }
 /*}}}*/
+/*int get_days{{{*/
+int get_days(int year,int month,int day)
+{
+    bool p,p1,p2,p3;
+    static int a1[12] = {0,1,0,1,1,2,2,3,4,4,5,6};
+    static int a2[12] = {0,1,-1,0,0,1,1,2,3,3,4,5};
+    p1 = (year % 400 == 0 );
+    p2 = (year % 100 != 0 );
+    p3 = (year % 4 == 0 );
+    p  = p1 || (p2 && p3 ) ;
+    printf("p = %d\n",p);
+    int days;
+    if ( month < 0 || month > 12  )
+    {
+        printf("month error!\n");
+        return 0;
+    }
+    int leap = year - 1;
+    leap = leap/4-leap/100+leap/400;
+    days = 365*(year - 1) + (month - 1)*30 + day + leap;
+    if ( p )
+    {
+        days += a1[month-1];
+    }
+    else
+    {
+        days += a2[month-1];
+    }
+    return days;
+}
+/*}}}*/
+/*int get_separat_days{{{*/
+int get_separat_days()
+{
+    int year1,month1,day1;
+    int year2,month2,day2;
+    FILE *fp;
+    fp= fopen("data.txt","r");
+    fscanf(fp,"%d%d%d",&year1,&month1,&day1);
+    fscanf(fp,"%d%d%d",&year2,&month2,&day2);
+    fclose(fp);
+    int days1,days2,days;
+    days1 = get_days(year1,month1,day1);
+    days2 = get_days(year2,month2,day2);
+    printf("days1 = %d,days2 = %d\n",days1,days2);
+    
+    days = days1 - days2;
+    if ( days < 0 )
+    {
+        days = - days;
+    }
+    return days;
+}
+/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
-        
-    srand(time(NULL)); 
-    double x1;
-    int k,num[n] = {0};
-    for(int i = 0;i < nn;i++)
-    {
-        x1 = ran;
-        k  = get_position(x1);
-        // printf("x1 = %lf,times = %d\n",x1,k);
-        num[k] += 1; 
-    }
-    for(int i = 0;i < n;i++)
-    {
-        printf("%d,num[%d] = %d\n",i,i,num[i]);
-        
-    }
-    
-    
-    
+    int year,month,day;
+    int days,week;
+    year  = 2016;
+    month = 4;
+    day   = 8;
+    days = get_days(year,month,day);
+    get_week(days);
+    //printf("days are %d\n",days);
+    days = get_separat_days();
+    printf("separation days are %d\n",days);
 }
 /*}}}*/
