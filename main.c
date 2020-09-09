@@ -4,7 +4,7 @@
 
 
 double *lnNum;
-int num = 1000000;
+int num = 1000;
 // f2 = f1*I
 // f1b = I*f1a
 // f2a = conj(f1a)
@@ -27,9 +27,9 @@ complex f1(double a,double b)
     for(int i = 0;i < num;i++)
     {
         // res += cexp((-a-b*I)*lnNum[i]);  
-        res += cpow(i+1,-a-b*I);  
+        // res += cpow(i+1,-a-b*I);  
         double theta = b*lnNum[i];
-        // res += cpow(i+1,-a)*(cos(theta) - I*sin(theta));  
+        res += cpow(i+1,-a)*(cos(theta) - I*sin(theta));  
     }
     
     return res;
@@ -86,8 +86,6 @@ void run(double a,double b,double eta)
         if ( i%freq == 0  )
         {
             
-            printCom(z[0]);
-            printCom(z[1]);
             printf("%d ,Result: %lf,%lf, res: %lf\n",i,a,b,cabs(z[0]));
             fprintf(fp,"%d,%lf\n",i,cabs(z[0]));
             // sleep(1);
@@ -113,12 +111,12 @@ int main( int argc,char *argv[])
 
     double a,b;
     double pi = 3.141592653;
-    a = 0.5;
-    b = 10;
+    a = 3;
+    b = 2;
 
     getLnNum();
     double eta = 1.0e-2;
-    // run(a,b,eta);
+    run(a,b,eta);
     printCom(f1(a,b));
     printf("%lf\n",pow(pi,4)/90);
     
