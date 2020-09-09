@@ -2,12 +2,13 @@
 
 int adj[m][3] ;
 /*void print_num{{{*/
-void print_num(int *num,int len)
+void print_num(int *num,int len,FILE *fp)
 {
     for(int i = 0;i < len;i++)
     {
-        printf("%d ",num[i]);
+        fprintf(fp,"%d ",num[i]);
     }
+    fprintf(fp,"\n");
 }
 /*}}}*/
 /*void getSerial{{{*/
@@ -19,7 +20,6 @@ void getSerial(int *serial,int num)
         serial[i] = num1 % 2;
         num1  = num1 / 2;
     }
-    // print_num(serial,m);
 }
 /*}}}*/
 /*void init_graph{{{*/
@@ -49,7 +49,7 @@ void getGraph(int *serial)
 }
 /*}}}*/
 /*int judge_connect{{{*/
-int judge_connect()
+int judge_connect(int a,int b)
 {
     int index[n];
     for(int i = 0;i < n;i++)
@@ -61,11 +61,17 @@ int judge_connect()
         int *num = adj[i];
         if ( num[0] == 1  )
         {
-            index[num[1]] = index[num[2]];
+            for(int j = 0;j < n;j++)
+            {
+                if ( index[j] == index[num[2]]  )
+                {
+                    index[j] = index[num[1]];
+                }
+            }
         }
     }
     // print_num(index,n);
-    if ( index[0] == index[2]  )
+    if ( index[a] == index[b]  )
     {
         return 1;
     }
@@ -86,33 +92,118 @@ int sum(int *num,int len)
     return res;
 }
 /*}}}*/
-/*int main{{{*/
-int main( int argc,char *argv[]){
+/*void run{{{*/
+void run(int a,int b)
+{
     int serial[m];
-    int count[m];
+    int count[m+1];
     int total = (int)pow(2,m);
     int num = 0;
-    printf("total = %d\n",total);
+    FILE *fp[m+1];
+    FILE *fp1;
+    fp1= fopen("all.txt","w");
+    assert(fp1 != NULL);
+
+    char filename[20];
+    for(int i = 0;i < m+1;i++)
+    {
+        sprintf(filename,"data%d.txt",i);
+        fp[i] = fopen(filename,"w");
+        assert(fp[i] != NULL);
+    }
     int res;
-    for(int i = 0;i < m;i++)
+    for(int i = 0;i < m+1;i++)
     {
         count[i] = 0;
     }
+    char new[2][10]={"succeed","failure"};
     init_graph();
     for(int i = 0;i < total;i++)
     {
         getSerial(serial,i);
         getGraph(serial);
-        res = judge_connect(); 
+        res = judge_connect(a,b); 
         num += res;
+        int number = sum(serial,m);
+        fprintf(fp[number],"%4d ",i);
+        print_num(serial,m,fp[number]);
+        print_num(serial,m,fp1);
         if ( res == 1  )
         {
-            count[sum(serial,m)]++;
+            count[number]++;
         }
-        print_num(serial,m);
-        printf("state = %d\n",res);
     }
     printf("num = %d\n",num);
-    print_num(count,m);
+    for(int i = 0;i < m;i++)
+    {
+        fclose(fp[i]);
+    }
+    for(int i = 0;i < m+1;i++)
+    {
+        printf("%d ",count[i]);
+        
+    }
+    printf("\n");
+    
+    fclose(fp1);
+}
+/*}}}*/
+/*int test{{{*/
+int test(int a)
+{
+    int serial[m];
+    int count[m];
+    int total = (int)pow(2,m);
+    int num = 0;
+    init_graph();
+    getSerial(serial,a);
+    getGraph(serial);
+    int res = judge_connect(0,2);
+    if ( res )
+    {
+        printf("succeed ");
+        return 1;
+    }
+    /*
+     * 
+    else
+    {
+        printf("failure\n");
+    }
+    * */
+}
+/*}}}*/
+/*void test_file{{{*/
+void test_file(char *filename)
+{
+    FILE *fp;
+    fp= fopen(filename,"r");
+    assert(fp != NULL);
+    int count = 0;
+    while ( !feof(fp) )
+    {
+        int num;
+        fscanf(fp,"%d",&num);
+        if ( test(num) )
+        {
+            printf("num = %4d \n",num);
+            count++;
+        }
+    }
+    printf("times = %d\n",count);
+    fclose(fp);
+}
+/*}}}*/
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+    for(int i = 0;i < n - 1;i++)
+    {
+        for(int j = i + 1;j < n;j++)
+        {
+            printf("%4d%4d ",i,j);
+            run(i,j);
+        }
+    }
 }
 /*}}}*/
