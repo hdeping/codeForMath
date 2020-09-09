@@ -1,4 +1,4 @@
-CC = gcc -O3
+CC = gcc -g
 option = -o exe -lm -lfftw3
 object = main.o
 source = main.c
