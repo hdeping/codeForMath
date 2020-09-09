@@ -149,7 +149,7 @@ void run(int a,int b)
 }
 /*}}}*/
 /*int test{{{*/
-int test(int a)
+int test(int a,int i,int j)
 {
     int serial[m];
     int count[m];
@@ -158,7 +158,7 @@ int test(int a)
     init_graph();
     getSerial(serial,a);
     getGraph(serial);
-    int res = judge_connect(0,2);
+    int res = judge_connect(i,j);
     if ( res )
     {
         printf("succeed ");
@@ -174,7 +174,7 @@ int test(int a)
 }
 /*}}}*/
 /*void test_file{{{*/
-void test_file(char *filename)
+void test_file(char *filename,int i,int j)
 {
     FILE *fp;
     fp= fopen(filename,"r");
@@ -184,7 +184,7 @@ void test_file(char *filename)
     {
         int num;
         fscanf(fp,"%d",&num);
-        if ( test(num) )
+        if ( test(num,i,j) )
         {
             printf("num = %4d \n",num);
             count++;
@@ -197,13 +197,13 @@ void test_file(char *filename)
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    for(int i = 0;i < n - 1;i++)
-    {
-        for(int j = i + 1;j < n;j++)
-        {
-            printf("%4d%4d ",i,j);
-            run(i,j);
-        }
-    }
+    int i = 0;
+    int j = 2;
+    printf("i = %d,j = %d\n",i,j);
+    test(45,0,2);
+    i = 1;
+    j = 3;
+    printf("i = %d,j = %d\n",i,j);
+    test(45,1,3);
 }
 /*}}}*/
