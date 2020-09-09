@@ -44,7 +44,7 @@ void getData(lapack_complex_float *data, int n)
 {
     double x1;
     int num;
-    for(int i = 0;i < n;i++)
+    for(int i = 0;i < n ;i++)
     {
         for(int j = 0;j < n;j++)
         {
@@ -54,6 +54,29 @@ void getData(lapack_complex_float *data, int n)
         
     }
     
+}
+/*}}}*/
+/*void eigenDist{{{*/
+void eigenDist(lapack_complex_float *eigenValue,int size)
+{
+    float *value;
+    value = (float *)malloc(sizeof(float)*size);
+    FILE *fp;
+    char filename[20];
+    sprintf(filename,"eigenDist%d.txt",size);
+    fp= fopen(filename,"w");
+    assert(fp != NULL);
+
+    for(int i = 0;i < size;i++)
+    {
+        value[i] = cabs(eigenValue[i]);
+        fprintf(fp,"%d,%f\n",i,value[i]);
+    }
+    printf("max is %f\n",value[0]);
+    
+    
+    free(value);
+    fclose(fp);
 }
 /*}}}*/
 /*int main{{{*/
@@ -95,6 +118,9 @@ int main(int argc, char **argv) {
                           data, size, eigenValue, leftState, size, rightState, size);
     clock2 = clock();
     printf("time is %f\n",(clock2 - clock1)*1E-6);
+
+    // get distribution 
+    eigenDist(eigenValue,n);
     
 
     
