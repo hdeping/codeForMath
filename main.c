@@ -8,8 +8,6 @@ void print_num(int *num,int len)
     {
         printf("%d ",num[i]);
     }
-    printf("\n");
-    
 }
 /*}}}*/
 /*void getSerial{{{*/
@@ -68,21 +66,43 @@ int judge_connect()
     }
 }
 /*}}}*/
+/*int sum{{{*/
+int sum(int *num,int len)
+{
+    int res = 0;
+    for(int i = 0;i < len;i++)
+    {
+        res += num[i]; 
+    }
+    return res;
+}
+/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
     int serial[m];
+    int count[m];
     int total = (int)pow(2,m);
     int num = 0;
     printf("total = %d\n",total);
     int res;
+    for(int i = 0;i < m;i++)
+    {
+        count[i] = 0;
+    }
     for(int i = 0;i < total;i++)
     {
         getSerial(serial,i);
         getGraph(serial);
         res = judge_connect(); 
         num += res;
-        printf("num = %d\n",res);
+        if ( res == 1  )
+        {
+            count[sum(serial,m)]++;
+        }
+        print_num(serial,m);
+        printf("state = %d\n",res);
     }
     printf("num = %d\n",num);
+    print_num(count,m);
 }
 /*}}}*/
