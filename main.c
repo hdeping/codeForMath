@@ -2,6 +2,22 @@
 
    float factor[2] = {log(3.0)/log(2.0),log(5.0)/log(2.0)};
 
+
+/*float getValue{{{*/
+float getValue(sequence input)
+{
+
+    int ii = input.ii;
+    int jj = input.jj;
+    int kk = input.kk;
+    float res;
+
+    res = ii*log(2.0)+jj*log(3.0)+kk*log(5.0);
+    
+    return res;
+
+}
+/*}}}*/
 /*void printNum{{{*/
 void printNum(int m)
 {
@@ -108,13 +124,13 @@ void printSeq(sequence *res1500,int num)
     
 }
 /*}}}*/
-/*int main{{{*/
-int main( int argc,char *argv[])
+/*sequence getSeq1500{{{*/
+sequence getSeq1500(int max1,int max2,int max3)
 {
 
 
    sequence *res1500;
-   int maxNum[3] = {40,21,15};
+   int maxNum[3] = {max1,max2,max3};
    int num = maxNum[0]*maxNum[1]*maxNum[2];
    res1500 = (sequence *)malloc(sizeof(sequence)*num);
    int ii,jj,kk;
@@ -133,26 +149,40 @@ int main( int argc,char *argv[])
        }
    }
    sort(res1500,0,num-1);
-   printSeq(res1500,2000);
-   sequence res1 = {20,0,0};
-   sequence res2 = {6,8,6};
-   printf("%d\n",isBig(res1,res2));
-   
-   printf("%f,%f\n",factor[0],factor[1]);
-   float indexFactor[3] = {1.0/log(2.0),1.0/log(3.0),1.0/log(5.0)};
-
-   for(int i = 0;i < 3;i++)
-   {
-       indexFactor[i] *= 100;
-       printf("%f,",indexFactor[i]);
-       
-   }
-   printf("\n");
-   
-
-   
-   
+   sequence res = res1500[1499];
    free(res1500);
-   
+   return res;
+    
+}
+/*}}}*/
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+    sequence res;
+    for(int i = 20;i < 41;i++)
+    {
+        for(int j = 10;j < 21;j++)
+        {
+            for(int k = 10;k < 21;k++)
+            {
+                res = getSeq1500(i,j,k);
+                /**
+                 * 
+                int ii = res.ii;
+                int jj = res.jj;
+                int kk = res.kk;
+                printf("(%3d,%3d,%3d),(%3d,%3d,%3d)\n",
+                         i,j,k,ii,jj,kk);
+                 * */
+                
+                int index = (i-20)*121+(j-10)*11+k-10;
+                printf("%d,%f\n",index,getValue(res));
+                
+            }
+            
+        }
+        
+    }
+    
 }
 /*}}}*/
