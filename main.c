@@ -1,72 +1,47 @@
 #include "head.h"
-#define nn 7
+#define n 20
 
-/*void print_sum{{{*/
-void print_sum(int *num)
+/*double getx{{{*/
+double getx(double *num,double alpha)
 {
-    int n  = nn;
-    printf("n = %d\n",n);
-    for(int i = 0;i < n;i++)
+    double an;
+    double delta = 0.98/n;
+    for(int j = 0;j < n;j++)
     {
-        printf("%d\n",num[i]);
+        an = 0.01+j*delta;
+        for(int i = 0;i < 30;i++)
+        {
+            an = alpha*an*(1-an);
+        }
+        num[j] = an;
     }
+    return an;
 }
 /*}}}*/
 /*int main{{{*/
-int main( int argc,char *argv[]){
-    static int num[nn][2] = {3,-5,-5,8,8,
-        -13,-13,21,21,-34,-34,55,55,-89};
-    for(int i = 0;i < nn;i++)
+int main( int argc,char *argv[])
+{
+    double alpha;
+    double an;
+    double num[10];
+    FILE *fp;
+    fp= fopen("data.txt","w");
+    assert(fp != NULL);
+
+    for(int i = 0;i < 40;i++)
     {
-        for(int j = 0;j < 2;j++)
+        alpha = 3.0+0.025*(i + 1);
+        getx(num,alpha);
+        for(int j = 0;j < n;j++)
         {
-            printf("%4d ",num[i][j] );
-        }
-        printf("\n");
-    }
-    int a[nn] ,coef[nn];
-    for(int i = 0;i < nn;i++)
-    {
-        a[i] = 2*i + 2;
-    }
-    int suma = 0,sumb = 0;
-    for(int i0 = 0;i0 < a[0];i0++) {
-    for(int i1 = 0;i1 < a[1];i1++) {
-    for(int i2 = 0;i2 < a[2];i2++) {
-    for(int i3 = 0;i3 < a[3];i3++) {
-    for(int i4 = 0;i4 < a[4];i4++) {
-    for(int i5 = 0;i5 < a[5];i5++) {
-    for(int i6 = 0;i6 < a[6];i6++) {
-        suma = 0;
-        sumb = 0;
-        coef[0] = i0;
-        coef[1] = i1;
-        coef[2] = i2;
-        coef[3] = i3;
-        coef[4] = i4;
-        coef[5] = i5;
-        coef[6] = i6;
-        for(int i = 0;i < nn;i++)
-        {
-            suma +=  coef[i]*num[i][0];
-            sumb +=  coef[i]*num[i][1];
-        }
-        if ( suma == 1 && sumb == 0    )
-        {
-            print_sum(coef);
-        }
-        if ( sumb == 0  )
-        {
-            printf("suma  = %d\n",suma);
-            printf("sumb  = %d\n",sumb);
-            print_sum(coef);
+            // fprintf(fp,"%lf %lf\n",alpha,num[j]);
+            printf("alpha = %lf,num = %lf\n",
+                    alpha,num[j]);
         }
     }
-    }
-    }
-    }
-    }
-    }
-    }
+    fclose(fp);
+    char rename[100];
+    sprintf(rename,"cp data.txt data%d.txt",n);
+    system(rename);
 }
 /*}}}*/

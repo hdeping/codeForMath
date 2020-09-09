@@ -16,3 +16,6 @@ p:
 	crop_png pic.png
 	rm pic.png
 	eog newpic.png
+clean:
+	rm exe $(object)
+all:clean run
