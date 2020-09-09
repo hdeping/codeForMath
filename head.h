@@ -3,5 +3,6 @@
 #include <stdlib.h>
 
 
-#define n 100
+#define n 3
+#define nn 1000000
 
