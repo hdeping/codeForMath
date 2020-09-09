@@ -1,25 +1,8 @@
 #include "head.h"
-#define n (int)1E6
-#define cy_times 40
-#define display_stati(arr,len) for(int i = 0;i < len;i++) \
-{ \
-    printf("%d ",arr[i]); \
-} \
-printf("\n");
+#define n (int)1E7
 
-#define display_stati_double(arr,len) for(int i = 0;i < len;i++) \
-{ \
-    printf("%lf ",arr[i]); \
-} \
-printf("\n");
-
-#define getsum(sum,arr,len) sum = 0;\
-for(int i = 0;i < len;i++) \
-{ \
-    sum += arr[i]; \
-} 
-
-
+char conway[n];
+char tmp[n];
 /*void lookAndSay{{{*/
 void lookAndSay(char *next,char *previous)
 {
@@ -42,58 +25,40 @@ void lookAndSay(char *next,char *previous)
     
 }
 /*}}}*/
-/*void statistics{{{*/
-void statistics(int *stati,char *conway)
-{
-    int len = strlen(conway);
-    for(int i = 0;i < len;i++)
-    {
-        switch(conway[i])
-        {
-            case '1':
-                stati[0]++;
-                break;
-            case '2':
-                stati[1]++;
-                break;
-            case '3':
-                stati[2]++;
-                break;
-        }
-    }
-}
-/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-
-    char conway[n];
-    char tmp[n];
+    if ( argc == 1  )
+    {
+        printf("Please input a file\n");
+        printf("For Example: '<command> <data.file>'\n");
+        return 0;
+    }
+    
     // file output
     FILE *fp;
-    fp= fopen("data.txt","r");
+    fp= fopen("conway.txt","w");
     assert(fp != NULL);
-    
-    // read file and get statistics data
-    int stati[3] = {0};
-    for(int i = 0;i < 51;i++)
-    {
-        fgets(conway,n,fp);
-        statistics(stati,conway);
-    }
-    
+    clock_t start,end;
 
-    int sum;
-    getsum(sum,stati,3);
-    double result[3];
-    for(int i = 0;i < 3;i++)
+
+    sprintf(conway,"1");
+    fprintf(fp,"%s\n",conway);
+    start = clock();
+    for(int i = 0;i < atoi(argv[1]);i++)
     {
-        result[i] = (double)stati[i] / sum;
+        lookAndSay(tmp,conway);
+        memcpy(conway,tmp,strlen(tmp));
+        fprintf(fp,"%s\n",conway);
+        
     }
-    display_stati(stati,3);
-    display_stati_double(result,3);
-    
+    end = clock();
     fclose(fp);
-    
+    fp= fopen("time.txt","a+");
+    assert(fp != NULL);
+    fprintf(fp,"index : %s,time is %lf\n",argv[1],(double)(end - start) / CLOCKS_PER_SEC);
+    printf("time is %lf\n",(double)(end - start) / CLOCKS_PER_SEC);
+    fclose(fp);
+
 }
 /*}}}*/
