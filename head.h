@@ -3,7 +3,5 @@
 #include <time.h>
 #include <assert.h>
 #include <igraph/igraph.h>
-#include <math.h>
-
 
 

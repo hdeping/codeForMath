@@ -1,5 +1,5 @@
-CC = gcc -O3
-option = -o exe -ligraph -lm
+CC = gcc -g 
+option = -o exe -ligraph
 object = main.o
 source = main.c
 run:$(object)
