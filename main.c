@@ -2,27 +2,36 @@
 /*int main{{{*/
 int main( int argc,char *argv[]){
     srand(1991); 
+    getdat(nn);
     readdat(nn);
-    int *p = num[0];
-    sortTest(p);
-    bubbleSort(p);
-    sortTest(p);
+    double time[m];
+    int *p;
+    for(int i = 0;i < m;i++)
+    {
+        p = num[i];
+        printf("i = %d\n",i);
+        sortTest(p);
+        new_time start,end;
+        gettimeofday(&start,NULL );
+        selectSort(p);
+        gettimeofday(&end,NULL );
+        time[i] = get_time(start,end);
+        sortTest(p);
+    }
+    analyze_time(time);
+    print_num(time);
 }
 /*}}}*/
-/*void bubbleSort{{{*/
-void bubbleSort(int *num)
+/*void selectSort{{{*/
+void selectSort(int *num)
 {
-    for(int i = 0;i < nn;i++)
+    for(int i = 0;i < nn - 1;i++)
     {
-        for(int j = 0;j < nn - 1;j++)
+        for(int j = i + 1;j < nn;j++)
         {
-            int tmp;
-            int k = j + 1;
-            if ( num[j] > num[k] )
+            if ( num[i] < num[j] )
             {
-                tmp    = num[k];
-                num[k] = num[j];
-                num[j] = tmp;
+                swap(num+j,num+i);
             }
         }
     }
@@ -112,21 +121,56 @@ void readdat(int n)
 }
 /*}}}*/
 /*void print_num{{{*/
-void print_num(int *num)
+void print_num(double *num)
 {
     printf("----start------\n");
-    for(int i = 0;i < nn;i++)
+    FILE *fp;
+    fp= fopen("time1.txt","w");
+    assert(fp != NULL);
+    for(int i = 0;i < m;i++)
     {
-        printf("%d\n",num[i]);
+        fprintf(fp,"%lf\n",num[i]);
     }
+    fclose(fp);
 }
 /*}}}*/
-/*void get_time{{{*/
-void get_time(new_time start,new_time end)
+/*double get_time{{{*/
+double get_time(new_time start,new_time end)
 {
     double time;
     time = end.tv_sec-start.tv_sec;
     time += 1E-6*(end.tv_usec-start.tv_usec);
-    printf("time = %lf\n",time);
+    printf("time is %lf\n",time );
+    return time;
+}
+/*}}}*/
+/*void swap{{{*/
+void swap(int *a,int *b)
+{
+    int tmp = *a;
+    *a      = *b;
+    *b      = tmp;
+}
+/*}}}*/
+/*void analyze_time{{{*/
+void analyze_time(double *time)
+{
+    double average,standard;
+    average = 0.0;
+    for(int i = 0;i < m;i++)
+    {
+        average += time[i]; 
+    }
+    average /= m;
+    printf("average time :%lf\n",average);
+    standard = 0.0;
+    for(int i = 0;i < m;i++)
+    {
+        standard += pow((time[i] - average),2); 
+    }
+    standard = sqrt(standard);
+    printf("standard error:%lf\n",standard);
+    printf("time ranges in (%lf,%lf)\n",
+              average-2*standard,average+2*standard);
 }
 /*}}}*/
