@@ -1,12 +1,4 @@
 #include "head.h"
-#define inf (int)1E9
-#define n 8
-struct Graph 
-{        
-    int matrix[n][n];                      
-    int vertex;
-}; 
-typedef struct Graph graph;
 /*void get_graph{{{*/
 void get_graph(graph *g)
 {
@@ -17,16 +9,19 @@ void get_graph(graph *g)
             g ->  matrix[i][j]  = inf;
         }
     }
-    FILE *fp;
-    fp= fopen("data.txt","r");
-    int i,j,k;
-    while ( !feof(fp) )
+    for(int i = 0;i < n;i++)
     {
-        fscanf(fp,"%d%d%d",&i,&j,&k);
-        g ->  matrix[i][j] = 1; 
-        g ->  matrix[j][i] = 1; 
+        for(int j = 0;j < n;j++)
+        {
+            float x1 = rand() / total;
+            if ( x1 < p )
+            {
+                g -> matrix[i][j] = 1; 
+            }
+            
+        }
+        
     }
-    fclose(fp);
 }
 /*}}}*/
 /*void print_matrix{{{*/
@@ -69,11 +64,8 @@ void Floyd(graph *g)
                     length[i][j] = len;
                     path[i][j]   = k;
                 }
-                
             }
-            
         }
-
     }
     print_matrix(length);
     print_matrix(path);
@@ -81,6 +73,7 @@ void Floyd(graph *g)
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
+    srand(time(NULL)); 
     graph network;
     network.vertex = n;
     get_graph(&network);
