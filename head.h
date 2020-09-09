@@ -15,13 +15,13 @@
 
 #include <stdio.h>              /* I/O lib         ISOC  */
 #include <stdlib.h>             /* Standard Lib    ISOC  */
-#ifdef __APPLE__
-#include <Accelerate/Accelerate.h>    /* The MacOS X blas/lapack stuff */
-typedef __CLPK_integer       CLPKinteger;
-typedef __CLPK_doublereal    CLPKdoublereal;
-#else
 #include <lapacke.h>    	/* C LAPACK         */
 typedef int       CLPKinteger;
 typedef double    CLPKdoublereal;
-#endif
+
 #include <cblas.h>           /* Basic Linear Algebra I/O */
+
+#define N 4
+#define LDA N
+#define LDVL N
+#define LDVR N
