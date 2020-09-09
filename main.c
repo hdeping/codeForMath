@@ -27,13 +27,15 @@ void selectSort(int *num)
 {
     for(int i = 0;i < nn - 1;i++)
     {
+        int max = i;
         for(int j = i + 1;j < nn;j++)
         {
-            if ( num[i] < num[j] )
+            if ( num[max] < num[j] )
             {
-                swap(num+j,num+i);
+                max = j;
             }
         }
+        swap(num+max,num+i);
     }
     
 }
