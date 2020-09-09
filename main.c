@@ -38,29 +38,8 @@ void get_graph(graph *g)
     while ( !feof(fp) )
     {
         fscanf(fp,"%d%d%d",&i,&j,&k);
-        g ->  matrix[i][j] = k; 
-        g ->  matrix[j][i] = k; 
-    }
-    fclose(fp);
-}
-/*}}}*/
-/*void get_new_graph{{{*/
-void get_new_graph(graph *g)
-{
-    for(int i = 0;i < n;i++)
-    {
-        for(int j = 0;j < n;j++)
-        {
-            g ->  matrix[i][j]  = 0;
-        }
-    }
-    FILE *fp;
-    fp= fopen("new.txt","r");
-    int i,j,k;
-    while ( !feof(fp) )
-    {
-        fscanf(fp,"%d%d%d",&i,&j,&k);
-        g ->  matrix[i][j] = k; 
+        g ->  matrix[i][j] = 1; 
+        g ->  matrix[j][i] = 1; 
     }
     fclose(fp);
 }
@@ -152,6 +131,16 @@ void showPath(int *path,int v,int v0)   //打印最短路径上的各个顶点
     }
 } 
 /*}}}*/
+/*void clear{{{*/
+void clear(int *dist,int *path)
+{
+    for(int i = 0;i < n;i++)
+    {
+        dist[i] = 0;
+        path[i] = 0;
+    }
+}
+/*}}}*/
 /*int main{{{*/
 int main(int argc, char *argv[])
 {
@@ -161,16 +150,20 @@ int main(int argc, char *argv[])
     int *path=(int *)malloc(sizeof(int)*n);
     graph network;
     network.vertex = n;
-    get_new_graph(&network);
-    v0 = 2;
-    DijkstraPath(network,dist,path,v0);
-    for(i=0;i<n;i++)
+    get_graph(&network);
+    for(int j = 0;j < n;j++)
     {
-        if(i!=v0)
+        v0 = j;
+        DijkstraPath(network,dist,path,v0);
+        for(i=0;i<n;i++)
         {
-            showPath(path,i,v0);
-            printf("%d \n",dist[i]);
+            if(i!=v0)
+            {
+                showPath(path,i,v0);
+                printf("%d \n",dist[i]);
+            }
         }
+        clear(dist,path);
     }
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#define n 5
+#define n 8
 #define limitStack 20
 #define MAX (int)1E8
 #define limitStack 20
