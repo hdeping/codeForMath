@@ -1,17 +1,18 @@
 #include "head.h"
-#define n 100
+#define n 300
+#define total (1.0*RAND_MAX)
 
 /*double getx{{{*/
 double getx(double *num,double alpha)
 {
-    double an = 0.5;
+    double an = rand() / total;
     for(int i = 0;i < n;i++)
     {
-        an = 1.0 - alpha*an*an;
+        an = alpha*an*an*an + (1.0 - alpha)*an;
     }
     for(int i = 0;i < n;i++)
     {
-        an = 1.0 - alpha*an*an;
+        an = alpha*an*an*an + (1.0 - alpha)*an;
         num[i] = an;
     }
     return an;
@@ -26,16 +27,21 @@ int main( int argc,char *argv[])
     FILE *fp;
     fp= fopen("data.txt","w");
     assert(fp != NULL);
+    srand(time(NULL)); 
 
-    for(int i = 0;i < 260;i++)
+    for(int i = 0;i < 250;i++)
     {
-        if ( i < 60)
+        if ( i < 100)
         {
-            alpha = -0.25 + 0.024*(i + 1);
+            alpha = -2 + 0.01*(i + 1);
+        }
+        else if (i < 150)
+        {
+            alpha = - 1 + 0.08*(i - 100);
         }
         else
         {
-            alpha = 1.2+0.004*(i - 61);
+            alpha = 3+0.01*(i - 150);
         }
         getx(num,alpha);
         for(int j = 0;j < n;j++)
