@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
+#include <sys/time.h>
 #define inf (int)1E9
-#define n 10
+#define n 100
 #define total  (1.0*RAND_MAX)
+typedef struct timeval new_time;
 
 struct Graph 
 {        

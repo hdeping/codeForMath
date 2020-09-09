@@ -1,4 +1,5 @@
 #include "head.h"
+graph network;
 /*void get_graph{{{*/
 void get_graph(graph *g)
 {
@@ -48,8 +49,8 @@ void print_matrix(int (* matrix)[n])
     }
 }
 /*}}}*/
-/*void Floyd{{{*/
-void Floyd(graph *g)
+/*int Floyd{{{*/
+int Floyd(graph *g)
 {
     int length[n][n];
     int path[n][n];
@@ -76,17 +77,52 @@ void Floyd(graph *g)
             }
         }
     }
-    print_matrix(length);
-    print_matrix(path);
+    for(int i = 0;i < n;i++)
+    {
+        for(int j = 0;j < n;j++)
+        {
+            if ( length[i][j]  == inf )
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
 } 
+/*}}}*/
+/*void get_time{{{*/
+void get_time(new_time start,new_time end)
+{
+    double time;
+    time = end.tv_sec-start.tv_sec;
+    time += 1E-6*(end.tv_usec-start.tv_usec);
+    printf("time = %lf\n",time);
+}
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
     srand(time(NULL)); 
-    graph network;
     network.vertex = n;
-    network.p      = 0.3;
-    get_graph(&network);
-    Floyd(&network);
+    new_time start,end;
+    int judge ;
+    double *p = &(network.p);
+    FILE *fp;
+    fp= fopen("data.txt","w");
+    assert(fp != NULL);
+
+    for(int i = 0;i < 25;i++)
+    {
+        *p = 0.005 + i*0.005;
+        judge = 0;
+        for(int j = 0;j < 100;j++)
+        {
+            get_graph(&network);
+            judge +=  Floyd(&network);
+        }
+        double res = (double)judge / 100.0;
+        printf("i = %d\n",i);
+        fprintf(fp,"%lf %lf\n",*p,res);
+    }
+    fclose(fp);
 }
 /*}}}*/
