@@ -1,6 +1,6 @@
-CC = gcc -g
+CC = gcc -g -lm
 run:
-	gcc -g main.c -o exe
+	$(CC) main.c -o exe
 	./exe
 2:
 	gcc -O2 main.c -o exe

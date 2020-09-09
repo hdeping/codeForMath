@@ -21,6 +21,37 @@ radius *get_radius(double r1,double r2,double r3)
     return res;
 }
 /*}}}*/
+/*radius *get_triangle_radius{{{*/
+radius *get_triangle_radius(point *p1,point *p2,point *p3)
+{
+    double r1,r2,r3;
+    double x[3],y[3];
+    double d[3],r[3];
+    x[0] = p1 -> x; 
+    x[1] = p2 -> x; 
+    x[2] = p3 -> x; 
+    y[0] = p1 -> y; 
+    y[1] = p2 -> y; 
+    y[2] = p3 -> y; 
+    int j;
+    double peri = 0.0;
+    for(int i = 0;i < 3;i++)
+    {
+        j      = (i+1)%3;
+        d[i] = pow(x[j]-x[i],2.0)+pow(y[j]-y[i],2.0);
+        d[i] = sqrt(d[i]);
+        peri += d[i]; 
+    }
+    peri /= 2.0;
+    for(int i = 0;i < 3;i++)
+    {
+        r[i] = peri - d[i];
+    }
+    radius *res;
+    res = get_radius(r[0],r[1],r[2]);
+    return res;
+}
+/*}}}*/
 /*void display_radius{{{*/
 void display_radius(radius *r)
 {
@@ -44,10 +75,10 @@ int main( int argc,char *argv[]){
     p1 = get_point(1.0,1.0);
     p2 = get_point(3.0,1.0);
     p3 = get_point(1.0,3.0);
-    r  = get_radius(1.0,1.0,1.0);
     display_point(p1);
     display_point(p2);
     display_point(p3);
+    r = get_triangle_radius(p1,p2,p3);
     display_radius(r);
     free(p1);
     free(p2);
@@ -55,4 +86,3 @@ int main( int argc,char *argv[]){
     free(r);
 }
 /*}}}*/
-
