@@ -1,5 +1,6 @@
 #include <head.h>
 
+/*void print_matrix{{{*/
 /* Auxiliary routine: printing a matrix */
 void print_matrix( char* desc, lapack_int m, lapack_int n, lapack_complex_float * a, lapack_int lda ) {
     lapack_int i, j;
@@ -10,28 +11,38 @@ void print_matrix( char* desc, lapack_int m, lapack_int n, lapack_complex_float 
             printf( "\n" );
     }
 }
-/* Main program */
-int main() {
+/*}}}*/
+/*int main{{{*/
+int main(int argc, char **argv) {
+    int  N    = 4;
+    int  LDA  = N;
+    int  LDVL = N;
+    int  LDVR = N;
     /* Locals */
     lapack_int n = N, lda = LDA, ldvl = LDVL, ldvr = LDVR, info;
-    /* Local arrays */
-    lapack_complex_float  w[N], vl[LDVL*N], vr[LDVR*N];
-    /**
-     * 
-    lapack_complex_float  a[LDA*N] = {
-       {-3.84f,  2.25f}, {-0.66f,  0.83f}, {-3.99f, -4.73f}, { 7.74f,  4.18f},
-       {-8.94f, -4.75f}, {-4.40f, -3.82f}, {-5.88f, -6.60f}, { 3.66f, -7.53f},
-       { 8.95f, -6.53f}, {-3.50f, -4.26f}, {-3.36f, -0.40f}, { 2.58f,  3.60f},
-       {-9.87f,  4.82f}, {-3.15f,  7.36f}, {-0.75f,  5.23f}, { 4.59f,  5.41f}
-    };
-     * */
+    lapack_complex_float  *data,*eigenValue;
+    lapack_complex_float  *leftState,*rightState;
+
+    data       = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
+    leftState  = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
+    rightState = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
+
+    eigenValue = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n);
     
-    lapack_complex_float  a[LDA*N] = {
-       -3.84f+  2.25f*I, -0.66f+  0.83f*I, -3.99f+ -4.73f*I,  7.74f+  4.18f*I,
-       -8.94f+ -4.75f*I, -4.40f+ -3.82f*I, -5.88f+ -6.60f*I,  3.66f+ -7.53f*I,
-        8.95f+ -6.53f*I, -3.50f+ -4.26f*I, -3.36f+ -0.40f*I,  2.58f+  3.60f*I,
-       -9.87f+  4.82f*I, -3.15f+  7.36f*I, -0.75f+  5.23f*I,  4.59f+  5.41f*I
-    };
+    for(int i = 0;i < N;i++)
+    {
+        for(int j = 0;j < N;j++)
+        {
+            int num = i*N  + j;
+            data[num] = i + j*I;
+        }
+    }
+    lapack_complex_float *w,*vl,*vr,*a;
+    a   = data;
+    w   = eigenValue;
+    vl  = leftState;
+    vr  = rightState;
+    
 
     /* Executable statements */
     printf( "LAPACKE_cgeev (column-major, high-level) Example Program Results\n" );
@@ -49,6 +60,10 @@ int main() {
     print_matrix( "Left eigenvectors", n, n, vl, ldvl );
     /* Print right eigenvectors */
     print_matrix( "Right eigenvectors", n, n, vr, ldvr );
-    exit( 0 );
-} /* End of LAPACKE_cgeev Example */
-
+    free(data);
+    free(leftState);
+    free(rightState);
+    free(eigenValue);
+    return 1;
+} 
+/*}}}*/

@@ -21,7 +21,3 @@ typedef double    CLPKdoublereal;
 
 #include <cblas.h>           /* Basic Linear Algebra I/O */
 
-#define N 4
-#define LDA N
-#define LDVL N
-#define LDVR N
