@@ -2,26 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-#include <stdbool.h>
+#include <igraph/igraph.h>
+#include <gsl/gsl_fit.h>
 
-#define n 8
-#define limitStack 20
-#define MAX (int)1E8
-#define limitStack 20
-
-struct Stack
-{
-    int arr[limitStack];
-    int length;
-    int top;
-};
-typedef struct Stack stack;
-
-struct Graph
-{
-    int matrix[n][n];      //邻接矩阵 
-    int vertex;                 //顶点数 
-    int edge;                 //边数 
-}; 
-typedef struct Graph graph;
+#define n 100
+#define total (1.0*RAND_MAX)
+void linear_regression(double *x,double *y,int len);
+void given_data(double a,double b);
 
