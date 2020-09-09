@@ -8,8 +8,11 @@ void run()
     double countTime = 0.0;
     for(int i = 0;i < m;i++)
     {
+        /*
+         * 
         printf("-------i = %d -------\n",i);
         printf("nn = %d\n",nn);
+         * */
         p = num[i];
         sortTest(p);
         new_time start,end;
@@ -18,6 +21,7 @@ void run()
         gettimeofday(&end,NULL );
         countTime += get_time(start,end);
         recordOrder +=  sortTest(p);
+        printf("recordOrder = %d\n",recordOrder);
     }
     countTime /= m; 
     // analyze_time(time);

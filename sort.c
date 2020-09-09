@@ -4,51 +4,57 @@
 void heapSort(int *num)
 {
     //build a headp
+    /*
+     * 
     printf("before heaping\n");
     print_num(num,nn);  
-    BuildingHeap(num,nn);  
     printf("after heaping\n");
     print_num(num,nn);  
+     * */
+    BuildingHeap(num,nn);  
     // adjust the list from the last element
     for (int i = nn - 1; i > 0; --i)  
     {  
-        printf("size = %d\n",i+1);
         swap(num,num+i);
-        print_num(num,i+1);  
+        // print_num(num,i+1);  
         HeapAdjust(num,0,i);  
-        heapTest2(num,i);
+        // heapTest2(num,i);
   }  
 }
 /*}}}*/
 /*void HeapAdjust{{{*/
 void HeapAdjust(int *num,int s, int length)  
 {  
-    int tmp  = num[s];  
-    int child = 2*s+1; 
-    while (child < length) {  
-        if(child+1 <length && num[child]<num[child+1]) { 
-            ++child ;  
-        }  
-        if(num[s]<num[child]) 
-        {  
-            num[s] = num[child];
-            s = child;       
-            child = 2*s+1;  
-        }  
-        else {            
-             break;  
-        }  
-        num[s] = tmp;         
-    }  
+    int child;
+    child = 2*s+1;
+    int tmp = num[s];
+    while ( child < length )
+    {
+        if ( child+1<length && num[child+1]>num[child]  )
+        {
+            child++;
+        }
+        if ( num[child] > num[s] )
+        {
+            swap(num+s,num+child);
+            s = child;
+            child=2*s+1;
+        }
+        else
+        {
+            break; 
+        }
+    }
 }  
 /*}}}*/
 /*void BuildingHeap{{{*/
 void BuildingHeap(int *num, int length)  
 {   
-    for (int i = (length -1) / 2 ; i >= 0; --i)  
+    for(int i = (length - 1) / 2;i > 0 ;i--)
     {
-        HeapAdjust(num,i,length);  
+        HeapAdjust(num,0,i);
     }
+    
 }  
 /*}}}*/
 /*int sortTest{{{*/
