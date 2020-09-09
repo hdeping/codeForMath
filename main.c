@@ -1,69 +1,127 @@
-#include <head.h>
+// naive page rank
+#include "head.h"
+#define n 5
 
-/*void print_matrix{{{*/
-/* Auxiliary routine: printing a matrix */
-void print_matrix( char* desc, lapack_int m, lapack_int n, lapack_complex_float * a, lapack_int lda ) {
-    lapack_int i, j;
-    printf( "\n %s\n", desc );
-    for( i = 0; i < m; i++ ) {
-            for( j = 0; j < n; j++ )
-                    printf( " (%6.2f,%6.2f)", creal(a[i+j*lda]), cimag(a[i+j*lda]));
-            printf( "\n" );
+#define swap(x,y)
+
+double weightInit[n];
+int edge[6][2] = {0,1,0,4,1,2,2,3,2,4,3,4};
+double matrix[n][n];
+/*void getNewWeight{{{*/
+void getNewWeight(double *weight,int len)
+{
+    int *index;
+    index = (int *)malloc(sizeof(int)*len);
+    for(int i = 0;i < len;i++)
+    {
+        index[i] = i;
     }
+    // get the new order
+    for(int i = 0;i < len - 1;i++)
+    {
+        for(int j = i + 1;j < len;j++)
+        {
+            if ( weight[i] < weight[j] )
+            {
+                int tmp  = index[i];
+                index[i] = index[j];
+                index[j] = tmp;
+            }
+        }
+    }
+    // get new matrix
+    
+    for(int i = 0;i < 6;i++)
+    {
+        int ii = edge[i][0] ;
+        int jj = edge[i][1] ;
+        matrix[ii][jj] = weightInit[index[jj]];
+        matrix[jj][ii] = weightInit[index[ii]];
+    }
+    // get new weight
+    for(int i = 0;i < len;i++)
+    {
+        weight[i] = 0.0;
+        for(int j = 0;j < len;j++)
+        {
+            weight[i] += matrix[i][j] ; 
+        }
+        
+    }
+    // print index
+    for(int i = 0;i < len;i++)
+    {
+        printf("%d ",index[i]);
+    }
+    
+    free(index);
+    return ;
+}
+/*}}}*/
+/*void print_matrix{{{*/
+void print_matrix(int (*a)[n],int len)
+{
+    for(int i = 0;i < len;i++)
+    {
+        for(int j = 0;j < len;j++)
+        {
+            printf("%d ",a[i][j] );
+            
+        }
+        printf("\n");
+        
+    }
+    
+}
+/*}}}*/
+/*void print_array{{{*/
+void print_array(double *arr,int len)
+{
+    for(int i = 0;i < len;i++)
+    {
+        printf("%10.6lf ",arr[i]);
+    }
+    printf("\n");
 }
 /*}}}*/
 /*int main{{{*/
-int main(int argc, char **argv) {
-    int  N    = 4;
-    int  LDA  = N;
-    int  LDVL = N;
-    int  LDVR = N;
-    /* Locals */
-    lapack_int n = N, lda = LDA, ldvl = LDVL, ldvr = LDVR, info;
-    lapack_complex_float  *data,*eigenValue;
-    lapack_complex_float  *leftState,*rightState;
+int main( int argc,char *argv[])
+{
 
-    data       = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
-    leftState  = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
-    rightState = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n*n);
+    double weight[n];
 
-    eigenValue = (lapack_complex_float *)malloc(sizeof(lapack_complex_float)*n);
-    
-    for(int i = 0;i < N;i++)
+    // get matrix 
+    for(int i = 0;i < 6;i++)
     {
-        for(int j = 0;j < N;j++)
-        {
-            int num = i*N  + j;
-            data[num] = i + j*I;
-        }
+        int ii = edge[i][0] ;
+        int jj = edge[i][1] ;
+        matrix[ii][jj] = 1;
+        matrix[jj][ii] = 1;
     }
-    lapack_complex_float *w,*vl,*vr,*a;
-    a   = data;
-    w   = eigenValue;
-    vl  = leftState;
-    vr  = rightState;
-    
 
-    /* Executable statements */
-    printf( "LAPACKE_cgeev (column-major, high-level) Example Program Results\n" );
-    /* Solve eigenproblem */
-    info = LAPACKE_cgeev( LAPACK_COL_MAJOR, 'V', 'V', n, a, lda, w, vl,
-     ldvl, vr, ldvr );
-    /* Check for convergence */
-    if( info > 0 ) {
-            printf( "The algorithm failed to compute eigenvalues.\n" );
-            exit( 1 );
+    // get weightInit and initialize weight
+    for(int i = 0;i < n;i++)
+    {
+        weightInit[i] = (double)(n - i) / (n*(n+1)/2);
+        // weight[i] = weightInit[i];
+        // weight[i] = 1.0;
+        weight[i] = 0.0;
+        for(int j = 0;j < n;j++)
+        {
+            weight[i] += matrix[i][j] ;      
+        }
+        
     }
-    /* Print eigenvalues */
-    print_matrix( "Eigenvalues", 1, n, w, 1 );
-    /* Print left eigenvectors */
-    print_matrix( "Left eigenvectors", n, n, vl, ldvl );
-    /* Print right eigenvectors */
-    print_matrix( "Right eigenvectors", n, n, vr, ldvr );
-    free(data);
-    free(leftState);
-    free(rightState);
-    free(eigenValue);
-    return 1;
-} 
+
+    // iteration begins
+
+    int inter_number = 10;
+    for(int i = 0;i < inter_number;i++)
+    {
+        getNewWeight(weight,n);
+        print_array(weight,n);
+    }
+
+    
+}
 /*}}}*/
