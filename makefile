@@ -1,9 +1,10 @@
-CC = gcc -g
-option = -o exe -lm
-object = main.o
-source = main.c
+CXX = g++ -g
+option = -o exe -lm -lGL -lGLU -lglut 
+object += opengl.o
+object += main.o
+source = $(object:.o=.cpp)
 run:$(object)
-	$(CC) $(object) $(option)
+	$(CXX) $(object) $(option)
 	./exe
 2:
 	gcc -O2 main.c -o exe
@@ -19,4 +20,3 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
-
