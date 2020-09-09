@@ -4,7 +4,7 @@
 
 
 double *lnNum;
-int num = 10000;
+int num = 100000;
 // f2 = f1*I
 // f1b = I*f1a
 // f2a = conj(f1a)
@@ -27,6 +27,7 @@ complex f1(double a,double b)
     for(int i = 0;i < num;i++)
     {
         res += cexp((-a-b*I)*lnNum[i]);  
+        // res += cpow(i+1,-a-b*I);  
     }
     
     return res;
@@ -45,7 +46,7 @@ complex f1a(double a,double b)
 }
 /*}}}*/
 /*void run{{{*/
-void run(double a,double b)
+void run(double a,double b,double eta)
 {
     /**
      * z1: a1+b1*i
@@ -54,7 +55,6 @@ void run(double a,double b)
      * s2: I*(z1\bar{z2} - z2\bar{z1})
      * */
     
-    double eta = 1.0e-2;
     double threshold = 1.0e-4;
     
     int cycleNum = 10000;
@@ -110,14 +110,18 @@ int main( int argc,char *argv[])
 {
 
     double a,b;
-    a = 0.95;
-    b = 4;
+    double pi = 3.141592653;
+    a = 4;
+    b = 0;
 
     getLnNum();
-    run(a,b);
+    double eta = 1.0e-2;
+    // run(a,b,eta);
+    printCom(f1(a,b));
+    printf("%lf\n",pow(pi,4)/90);
+    
 
     
     free(lnNum);
 }
 /*}}}*/
-
