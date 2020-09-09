@@ -133,10 +133,10 @@ int main( int argc,char *argv[])
     }
     
     print_result(stati,3);
-    print_result(stati2,9);
-    print_result(stati3,27);
-    print_result(stati4,81);
-    print_result(stati5,243);
+    // print_result(stati2,9);
+    // print_result(stati3,27);
+    // print_result(stati4,81);
+    // print_result(stati5,243);
 
     
     fclose(fp);
