@@ -1,30 +1,46 @@
 #include "head.h"
 
-/*extern functions{{{*/
-extern point *get_point(double x,double y);
-extern tri *get_triangle(point *p1,point *p2,point *p3);
-extern void escribed_circle(tri *delta);
-extern double inscribed_circle(tri *delta);
-extern double circucircle(tri *delta);
-extern void display_tri(tri *delta);
-/*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[]){
-    point *p1,*p2,*p3;
-    radius *r;
-    tri *delta;
-    p1 = get_point(1.0,1.0);
-    p2 = get_point(- 2.0,3.0);
-    p3 = get_point(3.0,3.0);
-    delta = get_triangle(p1,p2,p3);
-    display_tri(delta);
-    circucircle(delta);
-    inscribed_circle(delta);
-    escribed_circle(delta);
-    free(p1);
-    free(p2);
-    free(p3);
-    free(r);
-    free(delta);
+    if ( argc == 1  )
+    {
+        printf("Please input a file\n");
+        printf("For Example: '<command> <data.file>'\n");
+        return 0;
+    }
+    FILE *fp;
+    fp= fopen(argv[argc-1],"r");
+    const int n = 50;
+    const double threshold = 1.90;
+    int *col1,*col2,*col3;
+    double *res;
+    col1 = (int *)malloc(sizeof(int)*n);
+    col2 = (int *)malloc(sizeof(int)*n);
+    col3 = (int *)malloc(sizeof(int)*n);
+    res  = (double *)malloc(sizeof(double)*n);
+    for(int i = 0;i < n;i++)
+    {
+        fscanf(fp,"%d%d%d",col1+i,col2+i,col3+i);
+        res[i] = (double)col2[i]/(double)col3[i];
+        if ( res[i] > threshold )
+        {
+            printf("%d\n",i+1);
+            
+        }
+    }
+    fclose(fp);
+    fp= fopen("new.txt","w");
+    for(int i = 0;i < n;i++)
+    {
+        fprintf(fp,"%5d%5d%5d%10.5lf\n",col1[i],col2[i],
+                col3[i],res[i]);
+    }
+    fclose(fp);
+
+    free(col1);
+    free(col2);
+    free(col3);
+    free(res);
+    return 1;
 }
 /*}}}*/
