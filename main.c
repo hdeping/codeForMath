@@ -1,26 +1,69 @@
 #include "head.h"
 
-/*int main{{{*/
-int main( int argc,char *argv[])
+/*void getChar58{{{*/
+void getChar58(char *ch)
 {
-    int n = 21;
-    FILE *fp;
-    fp= fopen("data.txt","r");
-    assert(fp != NULL);
-
-    int num1,num2;
-    for(int i = 0;i < n;i++)
+    int num = 0;
+    // number 0~9
+    for(int i = 0;i < 10;i++)
     {
-        fscanf(fp,"%d%d",&num1,&num2);
+        ch[num] = '0'+i;
+        num++;
+    }
+    // lower character
+    char tmp;
+    for(int i = 0;i < 26;i++)
+    {
         
-        printf("%6d,%6d,%10d\n",num1,num2,num1*10000+num2);
+        tmp = 'a'+i;
+        if ( tmp !=  'l' && tmp != 'o'    )
+        {
+            ch[num] = tmp;
+            num++;
+        }
+        
+    }
+    // upper character
+    for(int i = 0;i < 26;i++)
+    {
+        
+        tmp = 'A'+i;
+        if ( tmp !=  'I' && tmp != 'O'    )
+        {
+            ch[num] = tmp;
+            num++;
+        }
         
     }
     
+    
+}
+/*}}}*/
+/*int main{{{*/
+int main( int argc,char *argv[])
+{
+    srand(time(NULL)); 
+    unsigned long privateKey[4];
+    unsigned long randNum ;
+
+    char ch[58];
+    // get char
+    getChar58(ch);
+    for(int i = 0;i < 58;i++)
+    {
+        printf("%c",ch[i]);
+        
+    }
+    printf("\n");
+    
 
 
-    fclose(fp);
-
+    for(int i = 0;i < 4;i++)
+    {
+        randNum = rand();
+        privateKey[i] = randNum*randNum;
+        printf("%ld\n",privateKey[i]);
+    }
 
 }
 /*}}}*/
