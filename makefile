@@ -1,8 +1,9 @@
-CC = gcc -g -o exe -ligraph
+CC = gcc -g 
+option = -o exe -ligraph
 object = main.o
 source = main.c
 run:$(object)
-	$(CC) $(object)
+	$(CC) $(option) $(object)
 	./exe
 2:
 	gcc -O2 main.c -o exe
@@ -18,5 +19,3 @@ p:
 	eog newpic.png
 clean:
 	rm exe $(object)
-d:
-	sh dot.sh
