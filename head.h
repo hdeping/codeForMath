@@ -2,6 +2,4 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-#include <igraph/igraph.h>
-
 
