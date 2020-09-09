@@ -1,144 +1,80 @@
 #include "head.h"
-#define n (int)1E7
-#define cy_times 40
 
-char conway[n];
-/*void statistics{{{*/
-void statistics(int *stati,char *conway,int m)
+struct HuffmanTree
 {
-    int len = strlen(conway);
-    int num;
-    for(int i = 0;i < len + 1 - m;i++)
-    {
-        num = 0;
-        for(int j = 0;j < m;j++)
-        {
-            num = 3*num + (conway[i+j] - '1');
-        }
-        stati[num] ++;
-    }
-}
-/*}}}*/
-/*void getSymbol{{{*/
-void getSymbol(int *symbol,int len)
-{
-    int order = (int)(log(len*1.0)/log(3.0) + 0.1);
-    int *arr;
-    arr = (int *)malloc(sizeof(int)*order);
-    for(int i = 0;i < len;i++)
-    {
-        int tmp = i;
-        for(int j = 0;j < order;j++)
-        {
-            arr[j] = tmp % 3;
-            tmp    = tmp / 3;
-        }
-        // get symbol
-        symbol[i] = 0;
-        for(int j = 0;j < order;j++)
-        {
-            symbol[i] = 10*symbol[i] + arr[order-j-1] + 1;
-        }
-    }
+    char ch;
+    int weight;
+    struct HuffmanTree *left,*right;
+};
+typedef struct HuffmanTree tree;
+#define swap(x,y) tmp = (x);\
+(x) = (y);\
+(y) = tmp;
 
-    free(arr);
-    
-}
-/*}}}*/
+#define dispaly_array(arr,len) for(int ii = 0;ii < len;ii++) \
+{\
+    printf("%d ",arr[ii]);\
+}\
+printf("\n");
+
 /*void sort{{{*/
-void sort(int *stati,double *result,int *symbol,int len)
+void sort(int *arr,int *index,int len)
 {
     int tmp;
-    double tmp1;
     for(int i = 0;i < len - 1;i++)
     {
         for(int j = i + 1;j < len;j++)
         {
-            if ( stati[i] < stati[j] )
+            if ( arr[i] < arr[j] )
             {
-                // swap
-                tmp       = stati[i];
-                stati[i]  = stati[j];
-                stati[j]  = tmp;
-                tmp       = symbol[i];
-                symbol[i] = symbol[j];
-                symbol[j] = tmp;
-                tmp1      = result[i];
-                result[i] = result[j];
-                result[j] = tmp1;
+                swap(arr[i],arr[j]);
+                swap(index[i],index[j]);
             }
         }
     }
 }
 /*}}}*/
-/*void print_result{{{*/
-void print_result(int *stati,int len)
+/*void firstTraverse{{{*/
+void firstTraverse(tree *node)
 {
-    int order = (int)(log(1.0 + len*1.0)/log(3.0) + 0.1);
-    printf("when order is %d\n",order);
-    
-    int sum = 0;
-    for(int i = 0;i < len;i++)
+    if ( node )
     {
-        sum  += stati[i]; 
+        printf("node is %c\n",node ->  ch);
+        firstTraverse(node -> left );
+        firstTraverse(node -> right );
     }
     
-    double *result;
-    result = (double *)malloc(sizeof(double)*len);
-    for(int i = 0;i < len;i++)
-    {
-        result[i] = (double)stati[i] / sum;
-    }
-    int *symbol;
-    symbol = (int *)malloc(sizeof(int)*len);
-    getSymbol(symbol,len);
-    sort(stati,result,symbol,len);
-    for(int i = 0;i < len;i++)
-    {
-        printf("%10d %10d %10.8lf\n",symbol[i],stati[i],result[i]);
-    }
-    free(symbol);
-    free(result);
-}
-/*}}}*/
-/*void run{{{*/
-void run()
-{
 }
 /*}}}*/
 /*int main{{{*/
 int main( int argc,char *argv[])
 {
-    run();
-
-    // file output
-    FILE *fp;
-    fp= fopen("conway.txt","r");
-    assert(fp != NULL);
+    char num[5] = "abcde";
+    int weight[5] = {1,2,4,8,9};
+    int index[5]  = {0,1,2,3,4};
+    tree data[9];
     
-    // read file and get statistics data
-    int stati[3] = {0};
-    int stati2[9] = {0};
-    int stati3[27] = {0};
-    int stati4[81] = {0};
-    int stati5[243] = {0};
-    while ( !feof(fp) )
+
+    for(int i = 0;i < 5;i++)
     {
-        fgets(conway,n,fp);
-        statistics(stati,conway,1);
-        statistics(stati2,conway,2);
-        statistics(stati3,conway,3);
-        statistics(stati4,conway,4);
-        statistics(stati5,conway,5);
+        data[i].ch     = num[i];
+        data[i].weight = weight[i];
+        data[i].left   = NULL ;
+        data[i].right  = NULL ;
     }
-    
-    print_result(stati,3);
-    // print_result(stati2,9);
-    // print_result(stati3,27);
-    // print_result(stati4,81);
-    // print_result(stati5,243);
-
-    
-    fclose(fp);
+    for(int i = 0;i < 4;i++)
+    {
+        sort(weight,index,5 - i);
+        dispaly_array(weight,5 - i);
+        weight[3 - i]  +=   weight[4 - i];
+        int j = 5 + i;
+        data[j].ch = '0';
+        data[j].weight = weight[3-i];
+        data[j].left   = data + index[3-i];
+        data[j].right  = data + index[4-i];
+        index[3 - i]   = j;
+        dispaly_array(index,5 - i);
+    }
+    firstTraverse(data+8);
 }
 /*}}}*/
